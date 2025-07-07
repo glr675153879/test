@@ -1,0 +1,23 @@
+package com.hscloud.hs.cost.account.model.dto.second;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+@Data
+@Schema(description = "一次分配结果")
+public class FirstTaskExtraUserCountDTO {
+
+    @Schema(description = "周期")
+    private String cycle;
+
+    @Schema(description = "核算单元id")
+    private String deptId;
+
+    @Schema(description = "核算单元id")
+    private String userId;
+
+    @Schema(description = "科室绩效")
+    private String ksAmt;
+
+
+}

@@ -1,0 +1,27 @@
+package com.hscloud.hs.cost.account.model.dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+/**
+ * 物资核算状态
+ * @author  lian
+ * @date  2024/6/2 22:49
+ *
+ */
+
+@Data
+@Schema(description = "物资核算状态状态dto")
+public class MaterialChargeStatusDto {
+
+    @Schema(description = "id")
+    @NotNull(message = "id不能为空")
+    private Long id;
+
+    @Schema(description = "状态：0：启用  1:停用  ")
+    @NotBlank(message = "状态不能为空")
+    private String status;
+}
