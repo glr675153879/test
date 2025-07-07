@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.CostAccountTaskNewMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hscloud.hs.cost.account.model.entity.CostAccountTaskNew">
+        <id column="id" property="id" />
+        <result column="account_task_name" property="accountTaskName" />
+        <result column="account_start_time" property="accountStartTime" />
+        <result column="account_end_time" property="accountEndTime" />
+        <result column="reason" property="reason" />
+        <result column="create_by" property="createBy" />
+        <result column="create_time" property="createTime" />
+        <result column="status" property="status" />
+        <result column="del_flag" property="delFlag" />
+        <result column="tenant_id" property="tenantId" />
+    </resultMap>
+
+    <select id="listByQueryDto" resultType="com.hscloud.hs.cost.account.model.entity.CostAccountTaskNew">
+        SELECT *
+        FROM
+        cost_account_task_new
+        <where>
+            <if test="query.accountTaskName != null and query.accountTaskName != ''">
+                <bind name="nameLike" value="'%'+query.accountTaskName+'%'"/>
+                AND account_task_name LIKE #{nameLike}
+            </if>
+            <!--            <if test="query.accountStartTime != null and query.accountStartTime != null">-->
+            <!--                AND account_start_time &gt;= #{query.accountStartTime}-->
+            <!--            </if>-->
+            <!--            <if test="query.accountEndTime != null and query.accountEndTime != null">-->
+            <!--                AND account_end_time &gt;= #{query.accountEndTime}-->
+            <!--            </if>-->
+            <!--            <if test="query.createBy != null and query.createBy != ''">-->
+            <!--                AND create_by = #{query.createBy}-->
+            <!--            </if>-->
+            <!--            <if test="query.createTime != null and query.createTime != ''">-->
+            <!--                AND #{query.createEndTime} &gt;= create_time AND #{query.createStartTime} &lt;= create_time-->
+            <!--            </if>-->
+            <!--            <if test="query.status != null and query.status != ''">-->
+            <!--                AND status = #{query.status}-->
+            <!--            </if>-->
+        </where>
+        order by account_start_time desc
+    </select>
+</mapper>

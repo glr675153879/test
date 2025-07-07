@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiImputationMapper">
+
+    <select id="listByQueryDto" resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiImputationDeptDto">
+        select
+        kau.name as accountUnitName,
+        kau.category_code as accountGroup,
+        kau.id as accountUnit,
+        ki.empids
+        from
+        kpi_account_unit kau
+        left join kpi_imputation ki on
+        kau.id = ki.dept_id and kau.busi_type = ki.busi_type
+        <where>
+            ki.category_code = #{input.categoryCode} and kau.status = '0' and kau.del_flag = '0'
+            and kau.busi_type = #{input.busiType}
+            <if test="input.accountUnitName != null and input.accountUnitName != ''">
+                AND kau.name like concat('%',#{input.accountUnitName}, '%')
+            </if>
+            <if test="input.accountGroup != null and input.accountGroup != ''">
+                AND kau.category_code =#{input.accountGroup}
+            </if>
+            <if test="input.period != null">
+                AND ki.period =#{input.period}
+            </if>
+            <if test="input.name != null and input.name != ''">
+                AND FIND_IN_SET((SELECT user_id from sys_user su where username = #{input.name} and del_flag = '0' and
+                status = '0' limit 1), ki.empids) > 0
+            </if>
+        </where>
+    </select>
+    <select id="listByQueryDto_defalt"
+            resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiImputationDeptDto">
+        Select
+        a.*,
+        kau.category_code as accountGroup,
+        kau.name as accountUnitName
+        from
+        (
+        selectmat
+        account_unit ,
+        GROUP_CONCAT(emp_name) as empids
+        from
+        kpi_user_attendance kua
+        where
+        account_unit is not null and period = (SELECT max(period) from kpi_user_attendance) and del_flag = '0'
+        group by
+        account_unit )a
+        join kpi_account_unit kau on
+        a.account_unit = kau.id
+        <where>
+            kau.status = '0' and kau.del_flag = '0'
+            <if test="input.accountUnitName != null and input.accountUnitName != ''">
+                AND kau.name like concat('%',#{input.accountUnitName}, '%')
+            </if>
+            <if test="input.accountGroup != null and input.accountGroup != ''">
+                AND kau.category_code =#{input.accountGroup}
+            </if>
+        </where>
+    </select>
+    <select id="listByQueryDto_defalt3"
+            resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiImputationDeptDto">
+        Select a.*,
+               kau.id            as account_unit,
+               kau.category_code as accountGroup,
+               kau.name          as accountUnitName
+        from kpi_account_unit kau
+                 left join
+             (select account_unit          as dept_id,
+                     GROUP_CONCAT(user_id) as empids
+              from kpi_user_attendance kua
+              where account_unit is not null
+                and period = (SELECT max(period)
+                              from kpi_user_attendance
+                              where is_locked = '1')
+                and del_flag = '0'
+              group by account_unit) a on
+                 a.dept_id = kau.id
+        where kau.status = '0'
+          and kau.del_flag = '0'
+          and kau.busi_type = #{busiType}
+    </select>
+
+    <select id="listByQueryDto_defalt2"
+            resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiImputationDeptDto">
+        Select
+        a.*,
+        kau.id as account_unit,
+        kau.category_code as accountGroup,
+        kau.name as accountUnitName
+        from
+        kpi_account_unit kau
+        left join
+        (
+        select
+        account_unit as dept_id ,
+        GROUP_CONCAT(user_id) as empids
+        from
+        kpi_user_attendance kua
+        where
+        account_unit is not null
+        and period = #{period} AND busi_type = #{busiType}
+        and del_flag = '0'
+        <if test="zhonzhishiId != null ">
+            AND !(kua.account_unit =#{zhonzhishiId} and kua.attendance_group!='中治室')
+        </if>
+        group by
+        account_unit )a on
+        a.dept_id = kau.id
+        where kau.status = '0' and kau.del_flag = '0' and kau.busi_type = #{busiType}
+    </select>
+</mapper>
+

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiSignLeftMapper">
+
+    <select id="first" resultType="com.hscloud.hs.cost.account.model.entity.kpi.KpiCalculate">
+        select * from kpi_calculate where task_child_id  = (
+            select task_child_id from kpi_config where period=#{period} and issued_flag='Y') and imputation_type in ('0','1')
+    </select>
+
+    <select id="second" resultType="com.hscloud.hs.cost.account.model.entity.second.UnitTaskCount">
+        select * from sec_unit_task_count where unit_task_id in (
+            select id from sec_unit_task where second_task_id =(
+                select id from sec_second_task where cycle = #{period})
+                                           and status ='APPROVAL_APPROVED' and del_flag ='0')
+    </select>
+</mapper>
+

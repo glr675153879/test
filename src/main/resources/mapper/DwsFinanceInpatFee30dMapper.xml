@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.DwsFinanceInpatFee30dMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hscloud.hs.cost.account.model.pojo.DwsFinanceInpatFee30d">
+        <result column="dt" property="dt" />
+        <result column="total_income_doc" property="totalIncomeDoc" />
+        <result column="account_unit_doc_id" property="accountUnitDocId" />
+        <result column="account_unit_doc_name" property="accountUnitDocName" />
+        <result column="emp_id" property="empId" />
+        <result column="emp_name" property="empName" />
+        <result column="dept_id" property="deptId" />
+        <result column="dept_name" property="deptName" />
+        <result column="amount_wes_med" property="amountWesMed" />
+        <result column="amount_pat_med" property="amountPatMed" />
+        <result column="amount_chi_med" property="amountChiMed" />
+        <result column="amount_treat" property="amountTreat" />
+        <result column="amount_chi_medi" property="amountChiMedi" />
+        <result column="amount_radiology" property="amountRadiology" />
+        <result column="amount_b" property="amountB" />
+        <result column="amount_check" property="amountCheck" />
+        <result column="amount_acupuncture" property="amountAcupuncture" />
+        <result column="amount_massage" property="amountMassage" />
+        <result column="amount_nurse" property="amountNurse" />
+        <result column="amount_decoct" property="amountDecoct" />
+        <result column="amount_injection" property="amountInjection" />
+        <result column="amount_physio" property="amountPhysio" />
+        <result column="amount_test" property="amountTest" />
+        <result column="amount_radiology2" property="amountRadiology2" />
+        <result column="amount_transfuse" property="amountTransfuse" />
+        <result column="amount_oxygenate" property="amountOxygenate" />
+        <result column="amount_treatment" property="amountTreatment" />
+        <result column="amount_bed" property="amountBed" />
+        <result column="amount_other" property="amountOther" />
+        <result column="amount_material" property="amountMaterial" />
+        <result column="amount_surgery" property="amountSurgery" />
+        <result column="amount_checkup" property="amountCheckup" />
+        <result column="amount_register" property="amountRegister" />
+        <result column="amount_card" property="amountCard" />
+        <result column="amount_record" property="amountRecord" />
+        <result column="amount_endoscope" property="amountEndoscope" />
+        <result column="amount_narcotism" property="amountNarcotism" />
+        <result column="amount_emergency" property="amountEmergency" />
+        <result column="amount_food" property="amountFood" />
+        <result column="amount_med" property="amountMed" />
+        <result column="amount_none_med" property="amountNoneMed" />
+        <result column="total" property="total" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+</mapper>

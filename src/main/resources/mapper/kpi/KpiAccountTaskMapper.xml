@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiAccountTaskMapper">
+
+    <select id="pageTask" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiAccountTaskListVO">
+        select task.*,child.status child_status,child.status_name ,ca.category_name plan_name,
+        task.index_code,i.name index_name
+        from kpi_account_task task
+        left join kpi_account_task_child child on task.task_child_id = child.id
+        left join kpi_category ca on ca.category_code = task.plan_code
+        left join kpi_index i on i.code = task.index_code
+        where task.del_flag = '0'
+        <if test="input.indexName !=null">
+            and i.name like concat('%',#{input.indexName},'%')
+        </if>
+        <if test="input.accountTaskName !=null">
+            and task.account_task_name like concat('%',#{input.accountTaskName},'%')
+        </if>
+        <if test="input.testFlag !=null">
+            and test_flag =#{input.testFlag}
+        </if>
+        <if test="input.period !=null">
+            and task.period =#{input.period}
+        </if>
+        <if test="input.issuedFlag !=null">
+            and task.issued_flag =#{input.issuedFlag}
+        </if>
+        <if test="input.type !=null">
+              <if test="input.type == 1">
+                  and task.period not like '%13'
+              </if>
+                <if test="input.type == 2">
+                    and task.period  like '%13'
+                </if>
+        </if>
+        order by task.period desc,task.updated_date desc
+    </select>
+</mapper>
+

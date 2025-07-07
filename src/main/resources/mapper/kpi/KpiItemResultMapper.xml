@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiItemResultMapper">
+
+    <select id="getTransferList" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiTransferListVO">
+        select
+        kir.period,
+        kir.user_id,
+        t.emp_name user_name,
+        t.dept_name,
+        group_concat(kir.code) code
+        from kpi_item_result kir
+        join kpi_item ki on kir.code = ki.code
+        join (
+            select kua.user_id,kua.emp_name,group_concat(kau.name) dept_name
+            from kpi_user_attendance kua
+            left join kpi_account_unit kau on kau.id = kua.account_unit
+            where kua.period = #{dto.period}
+            and kua.busi_type = #{dto.busiType}
+            group by kua.user_id,kua.emp_name
+        ) t on t.user_id = kir.user_id
+        where kir.mate_flag = '1'
+        and ki.acq_method='1'
+        and ki.caliber = '1'
+        AND kir.period = #{dto.period}
+        AND kir.busi_type = #{dto.busiType}
+        <choose>
+            <when test="dto.status != null and dto.status == '0'.toString()">
+                and kir.dept_id is null
+            </when>
+            <otherwise>
+                and kir.dept_id > 0
+            </otherwise>
+        </choose>
+        <if test="dto.userId != null">
+            AND kir.user_id = #{dto.userId}
+        </if>
+        <if test="dto.userName != null and dto.userName != ''">
+            AND t.emp_name like concat('%',#{dto.userName},'%')
+        </if>
+        group by kir.period,kir.user_id,t.emp_name,t.dept_name
+    </select>
+
+    <select id="getTransferList2" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiTransferInfoVO2">
+        select
+        kir.id,
+        kir.period,
+        kir.user_id,
+        t.emp_name user_name,
+        kir.code item_code,
+        ki.item_name,
+        kir.source_dept,
+        kir.value,
+        t.dept_name dept_name2,
+        kir.dept_id,kau.name dept_name,
+        kir.busi_code,
+        kir.ghkb
+        from kpi_item_result kir
+        join kpi_item ki on kir.code = ki.code
+        left join kpi_account_unit kau on kau.id = kir.dept_id
+        join (
+        select kua.user_id,kua.emp_name,group_concat(kau.name) dept_name
+        from kpi_user_attendance kua
+        left join kpi_account_unit kau on kau.id = kua.account_unit
+        where kua.period = #{dto.period}
+        and kua.busi_type = #{dto.busiType}
+        group by kua.user_id,kua.emp_name
+        ) t on t.user_id = kir.user_id
+        where kir.mate_flag = '1'
+        and ki.acq_method='1'
+        and ki.caliber = '1'
+        AND kir.period = #{dto.period}
+        AND kir.busi_type = #{dto.busiType}
+        <choose>
+            <when test="dto.status != null and dto.status == '0'.toString()">
+                and kir.dept_id is null
+            </when>
+            <otherwise>
+                and kir.dept_id > 0
+            </otherwise>
+        </choose>
+        <if test="dto.userId != null">
+            AND kir.user_id = #{dto.userId}
+        </if>
+        <if test="dto.userName != null and dto.userName != ''">
+            AND t.emp_name like concat('%',#{dto.userName},'%')
+        </if>
+        order by t.emp_name,kir.source_dept
+    </select>
+</mapper>
+

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.AdsIncomePerformanceScoreDocMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hscloud.hs.cost.account.model.pojo.AdsIncomePerformanceScoreDoc">
+        <result column="dt" property="dt"/>
+        <result column="account_doc_id" property="accountDocId"/>
+        <result column="account_doc_unit_name" property="accountDocUnitName"/>
+        <result column="account_nur_id" property="accountNurId"/>
+        <result column="account_nur_unit_name" property="accountNurUnitName"/>
+        <result column="inpat_income" property="inpatIncome"/>
+        <result column="dept_cmi" property="deptCmi"/>
+        <result column="insurance" property="insurance"/>
+        <result column="insurance_income" property="insuranceIncome"/>
+        <result column="inpat_exam_index" property="inpatExamIndex"/>
+        <result column="inpat_account_income" property="inpatAccountIncome"/>
+        <result column="mz_account_fee" property="mzAccountFee"/>
+        <result column="myg_account_fee" property="mygAccountFee"/>
+        <result column="yzmz_account_fee" property="yzmzAccountFee"/>
+        <result column="tech_account_fee" property="techAccountFee"/>
+        <result column="icu_fee" property="icuFee"/>
+        <result column="tranfer_fee" property="tranferFee"/>
+        <result column="no_med_fee" property="noMedFee"/>
+        <result column="tranfer_acup_fee" property="tranferAcupFee"/>
+        <result column="out_inspect_fee" property="outInspectFee"/>
+        <result column="examination_income" property="examinationIncome"/>
+        <result column="recovery_interdis" property="recoveryInterdis"/>
+        <result column="intervene_income" property="interveneIncome"/>
+        <result column="lastmonth" property="lastmonth"/>
+        <result column="colon_exec" property="colonExec"/>
+        <result column="tranfer_in" property="tranferIn"/>
+        <result column="tranfer_out" property="tranferOut"/>
+        <result column="income_total" property="incomeTotal"/>
+        <result column="cost_total" property="costTotal"/>
+        <result column="performance_score" property="performanceScore"/>
+    </resultMap>
+    <select id="selectDoctorTechAchievementVo"
+            resultType="com.hscloud.hs.cost.account.model.vo.DoctorTechAchievementVo">
+        SELECT
+        p.income_total AS incomeTotal,
+        p.cost_total AS costTotal,
+        p.inpat_income AS inpatIncome,
+        p.insurance_income AS insuranceIncome,
+        p.inpat_exam_index AS inpatExamIndex,
+        p.performance_score AS performanceScore,
+        c.dep_perf_point AS depPerfPoint,
+        c.inpat_perf_point AS inpatPerfPoint,
+        c.account_unit_id AS accountUnitId,
+        c.account_unit_doc AS accountUnitDoc
+        FROM
+        nfjx_ads.ads_income_performance_score_doc p
+        LEFT JOIN nfjx_ads.ads_income_performance_clinical_doc c ON c.account_unit_id = p.account_doc_id
+        AND c.account_period = p.account_period
+        WHERE
+        1=1
+        <if test="accountTime != null and accountTime !=''">
+            AND c.account_period = #{accountTime}
+        </if>
+        <if test="unitId != null">
+            AND c.account_unit_id = #{unitId}
+        </if>
+        <if test="unitName != null and unitName !=''">
+            <bind name="unitNameLike" value="'%'+unitName+'%'"/>
+            AND c.account_unit_doc LIKE #{unitNameLike}
+        </if>
+
+    </select>
+    <select id="selectTotalCost" resultType="java.math.BigDecimal" parameterType="java.lang.String">
+
+        SELECT SUM(performanceScore) AS totalIncome
+        FROM (
+        SELECT
+        p.income_total AS incomeTotal,
+        p.cost_total AS costTotal,
+        p.inpat_income AS inpatIncome,
+        p.insurance_income AS insuranceIncome,
+        p.inpat_exam_index AS inpatExamIndex,
+        p.performance_score AS performanceScore,
+        c.dep_perf_point AS depPerfPoint,
+        c.inpat_perf_point AS inpatPerfPoint,
+        c.account_unit_id AS accountUnitId,
+        c.account_unit_doc AS accountUnitDoc
+        FROM
+        nfjx_ads.ads_income_performance_score_doc p
+        LEFT JOIN nfjx_ads.ads_income_performance_clinical_doc c ON c.account_unit_id = p.account_doc_id
+        AND c.account_period = p.account_period
+        WHERE
+        1 = 1
+        <if test="accountTime != null and accountTime !=''">
+            AND c.account_period = #{accountTime}
+        </if>
+        ) AS subquery;
+    </select>
+
+</mapper>

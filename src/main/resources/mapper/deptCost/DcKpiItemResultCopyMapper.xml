@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.deptCost.DcKpiItemResultCopyMapper">
+
+    <insert id="insertByCycle">
+        INSERT INTO `hsx_cost`.`dc_kpi_item_result_copy`
+        (`origin_id`,
+         `task_id`,
+         `copy_date`,
+         `period`,
+         `code`,
+         `busi_code`,
+         `dept_id`,
+         `user_id`,
+         `imputation_dept_id`,
+         `value`,
+         `source_dept`,
+         `zdys`,
+         `brks`,
+         `kzys`,
+         `mate_flag`,
+         `created_date`,
+         `tenant_id`,
+         `ward`)
+        SELECT `id`,
+               #{taskId} AS `task_id`,
+               NOW(),
+               `period`,
+               `code`,
+               `busi_code`,
+               `dept_id`,
+               `user_id`,
+               `imputation_dept_id`,
+               `value`,
+               `source_dept`,
+               `zdys`,
+               `brks`,
+               `kzys`,
+               `mate_flag`,
+               `created_date`,
+               `tenant_id`,
+               `ward`
+        FROM `hsx_cost`.`kpi_item_result_test`
+        WHERE `period` = #{cycle};
+    </insert>
+</mapper>
+

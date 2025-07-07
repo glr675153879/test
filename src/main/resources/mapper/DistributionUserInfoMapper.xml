@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.DistributionUserInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hscloud.hs.cost.account.model.entity.DistributionUserInfo">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="unit_id" property="unitId"/>
+        <result column="unit_name" property="unitName"/>
+        <result column="type" property="type"/>
+        <result column="job" property="job"/>
+        <result column="is_bonus" property="isBonus"/>
+        <result column="is_unit" property="isUnit"/>
+    </resultMap>
+    <select id="listByQueryDto"
+            resultType="com.hscloud.hs.cost.account.model.entity.DistributionUserInfo">
+        SELECT
+        *
+        FROM
+        distribution_user_info
+        <where>
+            <if test="dto.userId != null and dto.userId != ''">
+                <bind name="userIdLike" value="'%'+dto.userId+'%'"/>
+                AND user_id LIKE #{userIdLike}
+            </if>
+            <if test="dto.userName != null and dto.userName != ''">
+                <bind name="userNameLike" value="'%'+dto.userName+'%'"/>
+                AND user_name LIKE #{userNameLike}
+            </if>
+            <if test="dto.type != null and dto.type != ''">
+                <bind name="typeLike" value="'%'+dto.type+'%'"/>
+                AND type LIKE #{typeLike}
+            </if>
+            <if test="dto.isBonus!= null and dto.isBonus != ''">
+                AND is_bonus LIKE #{dto.isBonus}
+            </if>
+            <if test="dto.unitName != null and dto.unitName != ''">
+                <bind name="unitNameLike" value="'%'+dto.unitName+'%'"/>
+                AND unit_name LIKE #{unitNameLike}
+            </if>
+            <if test="dto.job != null and dto.job != ''">
+                <bind name="jobLike" value="'%'+dto.job+'%'"/>
+                AND job LIKE #{jobLike}
+            </if>
+            <if test="dto.isUnit!= null and dto.isUnit != ''">
+                AND is_unit LIKE #{dto.isUnit}
+            </if>
+        </where>
+
+
+    </select>
+</mapper>

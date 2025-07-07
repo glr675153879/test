@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiUserAttendanceCopyMapper">
+
+    <select id="getList2" resultType="com.hscloud.hs.cost.account.model.entity.kpi.KpiUserAttendanceCopy">
+        select a.user_id,a.name emp_name,b.account_unit ,b.account_unit_name
+        from sys_user a
+                 left join kpi_user_attendance b on a.user_id =b.user_id and b.period=#{period}
+        where a.del_flag = '0'
+    </select>
+</mapper>
+

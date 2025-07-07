@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiAccountRelationMapper">
+
+    <resultMap id="docNurseMap" type="com.hscloud.hs.cost.account.model.vo.kpi.KpiAccountRelationVO">
+        <result column="doc_account_id" property="docAccountId"/>
+        <result column="doc_account_name" property="docAccountName"/>
+        <collection property="nurseAccountList" ofType="com.hscloud.hs.cost.account.model.vo.kpi.KpiAccountDocNurseVO">
+            <result column="nurse_account_id" property="nurseAccountId"/>
+            <result column="nurse_account_name" property="nurseAccountName"/>
+        </collection>
+    </resultMap>
+
+    <select id="getAccountRelationPageList" resultMap="docNurseMap">
+            select kau.id doc_account_id,
+                    case when kau.status = '1' then concat(kau.name,'(停用)') else kau.name end doc_account_name,
+                   kar.nurse_account_id,
+                    case when ka.status = '1' then concat(ka.name,'(停用)') else ka.name end nurse_account_name
+            from kpi_account_unit kau
+            left join kpi_account_relation kar on kau.id = kar.doc_account_id
+            left join kpi_account_unit ka on kar.nurse_account_id = ka.id
+            where kau.del_flag = '0' and kau.category_code = 'HSDX001'
+            <if test="dto.docAccountName != null and dto.docAccountName != ''">
+                and kau.name like concat('%',#{dto.docAccountName},'%')
+            </if>
+            <if test="dto.nurseAccountName != null and dto.nurseAccountName != ''">
+                and ka.name like concat('%',#{dto.nurseAccountName},'%')
+            </if>
+    </select>
+</mapper>

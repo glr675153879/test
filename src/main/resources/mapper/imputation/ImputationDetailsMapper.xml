@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.imputation.ImputationDetailsMapper">
+
+    <insert id="saveOrUpdateBatchImputationDetails" parameterType="java.util.List">
+        INSERT INTO im_imputation_details
+        (imputation_id, imputation_dept_unit_id, account_unit_id, account_unit_name, imputation_index_id, imputation_index_name, emp_names, user_ids, imputation_name, imputation_code, imputation_cycle, tenant_id, id, create_by, create_time, update_by, update_time, del_flag)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.imputationId},
+            #{item.imputationDeptUnitId},
+            #{item.accountUnitId},
+            #{item.accountUnitName},
+            #{item.imputationIndexId},
+            #{item.imputationIndexName},
+            #{item.empNames},
+            #{item.userIds},
+            #{item.imputationName},
+            #{item.imputationCode},
+            #{item.imputationCycle},
+            #{item.tenantId},
+            #{item.id},
+            #{item.createBy},
+            #{item.createTime},
+            #{item.updateBy},
+            #{item.updateTime},
+            #{item.delFlag}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        imputation_id = VALUES(imputation_id),
+        imputation_dept_unit_id = VALUES(imputation_dept_unit_id),
+        account_unit_id = VALUES(account_unit_id),
+        account_unit_name = VALUES(account_unit_name),
+        imputation_index_id = VALUES(imputation_index_id),
+        imputation_index_name = VALUES(imputation_index_name),
+        emp_names = VALUES(emp_names),
+        user_ids = VALUES(user_ids),
+        imputation_name = VALUES(imputation_name),
+        imputation_code = VALUES(imputation_code),
+        imputation_cycle = VALUES(imputation_cycle),
+        tenant_id = VALUES(tenant_id),
+        create_by = VALUES(create_by),
+        create_time = VALUES(create_time),
+        update_by = VALUES(update_by),
+        update_time = VALUES(update_time),
+        del_flag = VALUES(del_flag);
+    </insert>
+
+</mapper>
+

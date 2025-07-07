@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.CostAccountItemMapper">
+
+    <select id="listByQueryDto"
+            resultType="com.hscloud.hs.cost.account.model.entity.CostAccountItem">
+        SELECT
+            *
+        FROM
+            cost_account_item
+        <where>
+            del_flag='0'
+            <if test="query.groupId!=null">
+                AND group_id=#{query.groupId}
+            </if>
+            <if test="query.accountItemName != null and query.accountItemName != ''">
+                <bind name="accountItemNameLike" value="'%'+query.accountItemName+'%'"/>
+                AND account_item_name LIKE #{accountItemNameLike}
+            </if>
+            <if test="query.measureMethod != null and query.measureMethod != ''">
+                AND measure_method = #{query.measureMethod}
+            </if>
+            <if test="query.billMethod != null and query.billMethod != ''">
+                AND bill_method = #{query.billMethod}
+            </if>
+            <if test="query.measureUnit != null and query.measureUnit != ''">
+                AND measure_unit = #{query.measureUnit}
+            </if>
+            <if test="query.dimension != null and query.dimension != ''">
+                AND dimension = #{query.dimension}
+            </if>
+            <if test="query.acqMethod != null and query.acqMethod != ''">
+                AND acq_method = #{query.acqMethod}
+            </if>
+            <if test="query.retainDecimal != null and query.retainDecimal != ''">
+                AND retain_decimal = #{query.retainDecimal}
+            </if>
+            <if test="query.carryRule != null and query.carryRule != ''">
+                AND carry_rule = #{query.carryRule}
+            </if>
+            <if test="query.statisticMethod != null and query.statisticMethod != ''">
+                AND statistic_method = #{query.statisticMethod}
+            </if>
+            <if test="query.status != null and query.status != ''">
+                AND status = #{query.status}
+            </if>
+            <if test="query.caliber != null and query.caliber != ''">
+                <bind name="caliberLike" value="'%'+query.caliber+'%'"/>
+                AND caliber LIKE #{caliberLike}
+            </if>
+
+        </where>
+
+
+    </select>
+
+</mapper>

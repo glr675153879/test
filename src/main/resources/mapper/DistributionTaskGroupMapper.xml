@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.DistributionTaskGroupMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hscloud.hs.cost.account.model.entity.DistributionTaskGroup">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="account_object" property="accountObject"/>
+        <result column="index_id" property="indexId"/>
+        <result column="status" property="status"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="create_user_name" property="createUserName"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="listByQueryDto"
+            resultType="com.hscloud.hs.cost.account.model.entity.DistributionTaskGroup">
+        SELECT
+        *
+        FROM
+        distribution_task_group
+        <where>
+            <if test="dto.status != null and dto.status != ''">
+                AND status = #{dto.status}
+            </if>
+            <if test="dto.name != null and dto.name != ''">
+                <bind name="taskGroupNameLike" value="'%'+dto.name+'%'"/>
+                AND name LIKE #{taskGroupNameLike}
+            </if>
+            <if test="dto.type != null and dto.type != ''">
+                <bind name="taskGroupTypeLike" value="'%'+dto.type+'%'"/>
+                AND type LIKE #{taskGroupTypeLike}
+            </if>
+
+        </where>
+
+
+    </select>
+</mapper>

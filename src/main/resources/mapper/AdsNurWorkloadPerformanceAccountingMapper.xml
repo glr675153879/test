@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.AdsNurWorkloadPerformanceAccountingMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hscloud.hs.cost.account.model.pojo.AdsNurWorkloadPerformanceAccounting">
+        <result column="dt" property="dt" />
+        <result column="account_unit_id" property="accountUnitId" />
+        <result column="account_unit_name" property="accountUnitName" />
+        <result column="cases_total_points" property="casesTotalPoints" />
+        <result column="non_drug_ratio" property="nonDrugRatio" />
+        <result column="subtotal" property="subtotal" />
+        <result column="high_disease_work_performance_100" property="highDiseaseWorkPerformance100" />
+        <result column="high_disease_work_performance_total" property="highDiseaseWorkPerformanceTotal" />
+        <result column="inpat_nursing_chi_med_treat" property="inpatNursingChiMedTreat" />
+        <result column="out_nursing_chi_med_treat" property="outNursingChiMedTreat" />
+        <result column="fourth_surgery_1" property="fourthSurgery1" />
+        <result column="c14" property="c14" />
+        <result column="gastroscope" property="gastroscope" />
+        <result column="Bronchoscopy" property="Bronchoscopy" />
+        <result column="colonoscopy" property="colonoscopy" />
+        <result column="physical_number" property="physicalNumber" />
+        <result column="workload_performance_total" property="workloadPerformanceTotal" />
+    </resultMap>
+
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.AdsDocWorkloadPerformanceAccountingMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hscloud.hs.cost.account.model.pojo.AdsDocWorkloadPerformanceAccounting">
+        <result column="dt" property="dt" />
+        <result column="account_unit_id" property="accountUnitId" />
+        <result column="account_unit_name" property="accountUnitName" />
+        <result column="out_work_performance" property="outWorkPerformance" />
+        <result column="cases_total_points" property="casesTotalPoints" />
+        <result column="non_drug_ratio" property="nonDrugRatio" />
+        <result column="disbursement_ratio" property="disbursementRatio" />
+        <result column="subtotal" property="subtotal" />
+        <result column="high_disease_work_performance_100" property="highDiseaseWorkPerformance100" />
+        <result column="high_disease_work_performance_total" property="highDiseaseWorkPerformanceTotal" />
+        <result column="drgs_total_cost" property="drgsTotalCost" />
+        <result column="profit_loss" property="profitLoss" />
+        <result column="profit_loss_ratio" property="profitLossRatio" />
+        <result column="disease_operation_total" property="diseaseOperationTotal" />
+        <result column="admission_visits" property="admissionVisits" />
+        <result column="admission_visits_mid_high" property="admissionVisitsMidHigh" />
+        <result column="secondary_surgery" property="secondarySurgery" />
+        <result column="third_level_surgery" property="thirdLevelSurgery" />
+        <result column="fourth_surgery_1" property="fourthSurgery1" />
+        <result column="interventional_therapy" property="interventionalTherapy" />
+        <result column="day_surgery" property="daySurgery" />
+        <result column="treatment" property="treatment" />
+        <result column="fourth_surgery_2" property="fourthSurgery2" />
+        <result column="surgery_income" property="surgeryIncome" />
+        <result column="fourth_surgery_3" property="fourthSurgery3" />
+        <result column="painless_workload_order" property="painlessWorkloadOrder" />
+        <result column="painless_workload_narcotism" property="painlessWorkloadNarcotism" />
+        <result column="in_hospital_consultation" property="inHospitalConsultation" />
+        <result column="major_surgical_consultation" property="majorSurgicalConsultation" />
+        <result column="multi_consultation" property="multiConsultation" />
+        <result column="nursing_chi_med_treat" property="nursingChiMedTreat" />
+        <result column="out_chi_mdi_posts" property="outChiMdiPosts" />
+        <result column="inpat_chi_mdi_posts" property="inpatChiMdiPosts" />
+        <result column="winter_dusease_summer_tread" property="winterDuseaseSummerTread" />
+        <result column="bedisde_x_ray" property="bedisdeXRay" />
+        <result column="breast_resonance" property="breastResonance" />
+        <result column="workload_performance_total" property="workloadPerformanceTotal" />
+    </resultMap>
+
+</mapper>

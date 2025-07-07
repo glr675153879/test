@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.CostTaskExecuteResultIndexMapper">
+
+
+    <select id="getItems" resultType="java.lang.String">
+        select items from cost_task_execute_result_index where task_id = #{taskId} and unit_id = #{unitId} and index_id = #{indexId} and parent_id = #{parentId} limit 1
+    </select>
+    <select id="getIndexIds" resultType="com.hscloud.hs.cost.account.model.entity.CostTaskExecuteResultIndex">
+        select * from cost_task_execute_result_index where task_id = #{taskId} and unit_id = #{unitId} and parent_id = 0
+    </select>
+    <select id="getIndexListChildren"
+            resultType="com.hscloud.hs.cost.account.model.entity.CostTaskExecuteResultIndex">
+        select *
+        from cost_task_execute_result_index
+        where task_id = #{taskId}
+        <if test="unitId!=null">
+            and unit_id =#{unitId}
+        </if>
+        and parent_id = #{indexId};
+
+
+    </select>
+    <select id="getResultIndex"
+            resultType="com.hscloud.hs.cost.account.model.entity.CostTaskExecuteResultIndex">
+        select * from cost_task_execute_result_index where task_id = #{taskId} and unit_id = #{unitId} and index_id = #{bizId} and parent_id = #{parentId}
+    </select>
+    <select id="querySum" resultType="java.math.BigDecimal">
+        select ifnull(round(sum(index_count),2),0)  from cost_task_execute_result_index where task_id = #{taskId} and unit_id = #{unitId}
+        and parent_id = 0
+        <if test="indexId!=null and indexId !=''">
+           and index_id =  #{indexId}
+        </if>
+    </select>
+    <select id="getIndexCount" resultType="java.math.BigDecimal">
+        select sum(index_count)
+        from cost_task_execute_result_index
+        where task_id = #{taskId}
+          and index_id = #{indexId}
+          and parent_id = 0;
+          </select>
+</mapper>

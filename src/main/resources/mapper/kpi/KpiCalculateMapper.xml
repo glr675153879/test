@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiCalculateMapper">
+
+    <select id="getList" resultType="com.hscloud.hs.cost.account.model.entity.kpi.KpiItemResultCopy">
+        select * from
+            kpi_calculate kc
+                join kpi_account_plan_child_copy kapcc on kc.plan_child_code = kapcc.code
+                join kpi_account_plan_copy kap on kap.plan_code = kapcc.plan_code
+            ${ew.customSqlSegment}
+    </select>
+    <select id="getList2" resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiCalculateConfigDto">
+        SELECT
+            id,
+            period,
+            plan_child_code,
+            task_child_id,
+            code,
+            value,
+            dept_id,
+            emp_id,
+            tenant_id,
+            user_id,
+            user_name,
+            dept_name,
+            name,
+            formula_id,
+            imputation_code,
+            user_imp,
+            user_type,
+            dept_user_type,
+            unit_type,
+            group_name
+        FROM
+            kpi_calculate
+            ${ew.customSqlSegment}
+    </select>
+    <select id="getList3" resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiCalculateConfigDto">
+        SELECT
+        result_json,
+        imputation_type,
+        id,
+        period,
+        plan_child_code,
+        task_child_id,
+        code,
+        value,
+        dept_id,
+        emp_id,
+        tenant_id,
+        user_id,
+        user_name,
+        dept_name,
+        name,
+        formula_id,
+        imputation_code,
+        user_imp,
+        user_type,
+        dept_user_type,
+        unit_type,
+        group_name
+        FROM
+        kpi_calculate
+        ${ew.customSqlSegment}
+    </select>
+
+    <select id="getAlloValue" resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiReportAlloValue">
+        select
+            name,
+            code,
+            '2' type,
+            user_id,
+            user_name,
+            dept_id,
+            dept_name,
+            value
+        from kpi_calculate
+        where task_child_id = #{r.taskChildId}  and period = #{period} and (1!=1
+        <if test="r.outMembersEmp!=null  and r.outMembersEmp!=''">
+            or user_id in
+            <foreach item="item" index="index" collection="r.outMembersEmp.split(',')" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="r.outMembersDept!=null and r.outMembersDept!=''">
+            or dept_id in
+            <foreach item="item" index="index" collection="r.outMembersDept.split(',')" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>)
+        and code in
+        <foreach item="item" index="index" collection="r.allocationIndexs.split(',')" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>
+

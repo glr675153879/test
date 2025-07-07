@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiConfigMapper">
+    <update id="updateIndex">
+        update kpi_config set
+        <if test="nonEquivalentIndexUpdateDate != null">
+            non_equivalent_index_update_date = #{nonEquivalentIndexUpdateDate},
+        </if>
+        <if test='busiType.equals("1")'>
+            index_flag = #{status}
+        </if>
+        <if test='busiType.equals("2")'>
+            index_flag_ks = #{status}
+        </if>
+        where period = #{period}
+    </update>
+    <select id="getList" resultType="com.hscloud.hs.cost.account.model.entity.kpi.KpiConfig">
+        select a.*
+        from kpi_config a
+                 join kpi_account_task b on a.task_child_id = b.task_child_id
+            ${ew.customSqlSegment}
+        order by a.period desc
+    </select>
+    <select id="page2" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiConfigVO">
+        select a.*,b.account_task_name task_name
+        from kpi_config a
+                 left join kpi_account_task b on a.task_child_id = b.task_child_id
+            ${ew.customSqlSegment}
+        order by a.period desc
+    </select>
+</mapper>
+

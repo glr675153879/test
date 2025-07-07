@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.AdsHospitalRewardsPunishmentsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hscloud.hs.cost.account.model.pojo.AdsHospitalRewardsPunishments">
+        <result column="dt" property="dt" />
+        <result column="account_unit_id" property="accountUnitId" />
+        <result column="account_unit_name" property="accountUnitName" />
+        <result column="preparation_visit" property="preparationVisit" />
+        <result column="patent_ownership" property="patentOwnership" />
+        <result column="western_proportion" property="westernProportion" />
+        <result column="temp_processing" property="tempProcessing" />
+        <result column="refine_performance" property="refinePerformance" />
+        <result column="letter_visits" property="letterVisits" />
+        <result column="medical_issurance" property="medicalIssurance" />
+        <result column="medical_dispute" property="medicalDispute" />
+        <result column="total" property="total" />
+    </resultMap>
+
+</mapper>

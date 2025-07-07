@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.CostAccountUnitMapper">
+
+
+
+    <update id="updateStatusById">
+        UPDATE cost_account_unit
+        SET status = #{status}
+        WHERE id = #{id};
+    </update>
+
+
+    <select id="selectRelateInfoByUnitId"
+            resultType="com.hscloud.hs.cost.account.model.dto.CostUnitRelateInfoDto">
+        SELECT NAME , relate_id as id,type
+        FROM
+            cost_unit_relate_info
+        WHERE
+            account_unit_id = #{unitId};
+    </select>
+
+    <select id="selectExcludeInfoByUnitId"
+            resultType="com.hscloud.hs.cost.account.model.entity.CostUnitExcludedInfo">
+        SELECT NAME , relate_id as id,type
+        FROM
+            cost_unit_excluded_info
+        WHERE
+            account_unit_id = #{unitId};
+    </select>
+
+    <select id="list" resultType="com.hscloud.hs.cost.account.model.dto.CostAccountUnitQueryDto">
+
+    </select>
+    <select id="selectStatusById" resultType="java.lang.String">
+        SELECT STATUS
+        FROM
+            cost_account_unit
+        WHERE
+            id = #{id};
+    </select>
+
+    <insert id="insertRelateInfo">
+
+        INSERT INTO cost_unit_relate_info (account_unit_id,name,relate_id,type,code)
+        VALUES (#{unitId}, #{name}, #{relateId},#{type},#{code})
+    </insert>
+
+    <delete id="removeRelateInfoByUnitId">
+        DELETE  FROM cost_unit_relate_info where account_unit_id = #{unitId}
+    </delete>
+
+    <delete id="removeExcludedInfoByUnitId">
+        DELETE  FROM cost_unit_excluded_info where account_unit_id = #{unitId}
+    </delete>
+
+    <select id="listByQueryDto" resultType="com.hscloud.hs.cost.account.model.entity.CostAccountUnit">
+        SELECT DISTINCT
+        u.id,
+        u.name,
+        u.account_group_code,
+        u.account_type_code,
+        u.responsible_person_id,
+        u.responsible_person_name,
+        u.responsible_person_type,
+        u.status,
+        u.del_flag,
+        u.initialized,
+        u.create_by,
+        u.update_by,
+        u.create_time,
+        u.update_time,
+        u.tenant_id
+        FROM
+        cost_account_unit u
+        LEFT JOIN cost_unit_relate_info r ON u.id = r.account_unit_id
+        <where>
+            del_flag='0'
+            <if test="query.id != null and query.id != ''">
+                AND u.id = #{query.id}
+            </if>
+            <if test="query.name != null and query.name != ''">
+                <bind name="nameLike" value="'%'+query.name+'%'"/>
+                AND u.name LIKE #{nameLike}
+            </if>
+            <if test="query.accountGroupCode != null and query.accountGroupCode != ''">
+                AND u.account_group_code = #{query.accountGroupCode}
+            </if>
+            <if test="query.accountTypeCode != null and query.accountTypeCode != ''">
+                AND u.account_type_code = #{query.accountTypeCode}
+            </if>
+            <if test="query.costUnitRelateInfo != null and query.costUnitRelateInfo != ''">
+                <bind name="costUnitRelateInfoLike" value="'%'+query.costUnitRelateInfo+'%'"/>
+                AND r.name LIKE #{costUnitRelateInfoLike}
+            </if>
+            <if test="query.responsiblePerson != null and query.responsiblePerson != ''">
+                <bind name="responsiblePersonLike" value="'%'+query.responsiblePerson+'%'"/>
+                AND u.responsible_person_name LIKE #{responsiblePersonLike}
+            </if>
+            <if test="query.accountTypeCode != null and query.accountTypeCode != ''">
+                AND u.account_type_code = #{query.accountTypeCode}
+            </if>
+            <if test="query.updateTime != null and query.updateTime != ''">
+                AND u.updateTime = #{query.updateTime}
+            </if>
+            <if test="query.status != null and query.status != ''">
+                AND status = #{query.status}
+            </if>
+        </where>
+        order by u.create_time desc
+    </select>
+
+</mapper>

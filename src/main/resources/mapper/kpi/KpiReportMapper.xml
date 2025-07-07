@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiReportMapper">
+
+    <select id="page" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiReportVO">
+        select * from kpi_report
+        where 1=1
+        <if test="input.code !=null">
+            and code =#{input.code}
+        </if>
+        <if test="input.name !=null">
+            and name =#{input.name}
+        </if>
+        <if test="input.caliber !=null">
+            and caliber =#{input.caliber}
+        </if>
+    </select>
+    <select id="selectList" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiReportDetailVO">
+        select * from kpi_report_detail
+        where report_code =#{input.report_code}
+        <if test="input.code !=null">
+            and code =#{input.code}
+        </if>
+        <if test="input.name !=null">
+            and name =#{input.name}
+        </if>
+        <if test="input.caliber !=null">
+            and caliber =#{input.caliber}
+        </if>
+    </select>
+    <select id="getItemCas" resultType="com.hscloud.hs.cost.account.model.entity.kpi.KpiCalculate">
+        SELECT
+            id,
+            period,
+            code,
+            dept_id,
+            user_id,
+            value,
+            created_date,
+            tenant_id,
+            task_child_id
+        FROM
+            kpi_item_result_copy
+                ${ew.customSqlSegment}
+    </select>
+</mapper>
+

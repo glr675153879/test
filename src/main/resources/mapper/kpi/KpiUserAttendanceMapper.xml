@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiUserAttendanceMapper">
+
+    <select id="listByQueryDto" resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiAccountUserDto">
+        SELECT
+            a.emp_name,
+            a.emp_id,
+            a.account_unit,
+            km2.id as member_id,
+            km2.member_code as user_type_code,
+            kau.name as account_unit_name
+        FROM
+            (
+                select
+                    *
+                from
+                    kpi_user_attendance kua
+                where
+                    user_id in (
+                        SELECT
+                            member_id
+                        from
+                            kpi_member km
+                        where
+                            member_type = 'role_emp'
+                          and host_code = #{input.categoryCode}))a
+                join kpi_member km2 on
+                a.user_id = km2.host_id
+                    and km2.member_type = 'emp_type'
+                join kpi_account_unit kau on
+                a.account_unit = kau.id
+        <where>
+            <if test="input.empName != null and input.empName != ''">
+                AND a.emp_name like  concat('%',#{input.empName}, '%')
+            </if>
+        </where>
+    </select>
+
+
+    <select id="listByQueryDto2" resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiAccountUserDto">
+        select
+        su.username as emp_name,
+        su.job_number as emp_id,
+        su.user_id,
+        a.id as member_id,
+        km3.member_id as gjks,
+        km4.member_code as zw,
+        km2.member_code as user_type_code
+        from
+        kpi_member a
+        join sys_user su on
+        a.member_id = su.user_id
+        and a.member_type = 'role_emp'
+        and a.busi_type = #{input.busiType}
+        and a.host_code = #{input.categoryCode}
+        and a.period = '0'
+        left join kpi_member km2 on
+        su.user_id = km2.host_id
+        and km2.member_type = 'emp_type'  and km2.busi_type = #{input.busiType}
+        left join kpi_member km3 on
+        su.user_id = km3.host_id
+        and km3.member_type = 'role_emp_group'  and km3.busi_type = #{input.busiType} and km3.host_code = #{input.categoryCode}
+        left join kpi_member km4 on
+        su.user_id = km4.host_id
+        and km4.member_type = 'role_emp_zw'  and km4.busi_type = #{input.busiType}
+        <where>
+            <if test="input.empName != null and input.empName != ''">
+                AND su.username like  concat('%',#{input.empName}, '%')
+            </if>
+            <if test="input.userType != null and input.userType != ''">
+                AND  km2.member_code =#{input.userType}
+            </if>
+        </where>
+    </select>
+
+    <select id="listByQueryDto2_list" resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiAccountUserDto">
+        select
+        su.username as emp_name,
+        su.job_number as emp_id,
+        su.user_id,
+        a.id as member_id,
+        km3.member_id as gjks,
+        km4.member_code as zw,
+        km2.member_code as user_type_code
+        from
+        kpi_member a
+        join sys_user su on
+        a.member_id = su.user_id
+        and a.member_type = 'role_emp'
+        and a.busi_type = #{busiType}
+        and a.host_code = #{categoryCode}
+        and a.period = '0'
+        left join kpi_member km2 on
+        su.user_id = km2.host_id
+        and km2.member_type = 'emp_type'  and km2.busi_type = #{busiType}
+        left join kpi_member km3 on
+        su.user_id = km3.host_id
+        and km3.member_type = 'role_emp_group'  and km3.busi_type = #{busiType}
+        left join kpi_member km4 on
+        su.user_id = km4.host_id
+        and km4.member_type = 'role_emp_zw'  and km4.busi_type = #{busiType}
+    </select>
+
+    <select id="findList" resultType="com.hscloud.hs.cost.account.model.entity.kpi.KpiUserAttendance">
+        select
+            a.*,b.name
+        from
+            kpi_user_attendance a
+        join kpi_account_unit b on a.account_unit = b.id
+        where
+            period =(
+                select
+                    max(period)
+                from
+                    kpi_user_attendance kua where kua.busi_type = #{input.busiType})
+          and a.is_locked = '1' and a.busi_type=#{input.busiType}
+    </select>
+    <select id="findMatch" resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiUserAttendanceDto">
+        SELECT
+            kua.*,
+            km.member_id as accountUnitId,
+            un.name as accountUnitName
+        from
+            kpi_user_attendance kua
+                left join kpi_account_unit un on
+                kua.account_unit = un.id
+                left join
+                (select distinct member_id,host_id,host_code,period,busi_type
+                from kpi_member km where km.member_type = 'user_dept' and km.period = #{input.period} and km.busi_type = #{input.busiType})km
+                on
+                kua.user_id = km.host_id and kua.attendance_group = km.host_code
+
+        <where>
+            kua.period = #{input.period} and kua.del_flag = '0' and kua.source_type ='2'
+            and kua.busi_type = #{input.busiType}
+            <if test="input.type != null">
+                <if test='input.type==1'>
+                   and  kua.is_edited ='0' and  kua.account_unit is null
+                </if>
+                <if test='input.type==2'>
+                    and  kua.is_edited ='1' and km.member_id is not null
+                </if>
+                <if test='input.type==3'>
+                    and  kua.account_unit >= 0 and  km.member_id is null
+                </if>
+            </if>
+            <if test="input.attendanceGroup != null and input.attendanceGroup != ''">
+                AND kua.attendance_group like concat('%', #{input.attendanceGroup}, '%')
+            </if>
+        </where>
+
+    </select>
+    <select id="findAdjust" resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiValueAdjustPageDto">
+        SELECT
+            kva.*,
+            ifnull(ki.name,ki2.item_name) as codeName,
+            ifnull(ki.reserved_decimal,ki2.retain_decimal) retain_decimal,
+            ifnull(ki.carry_rule,ki2.carry_rule ) carry_rule,
+            ifnull(ki.caliber,ki2.caliber) caliber
+        from
+            kpi_value_adjust kva
+        left join kpi_index ki on
+        kva.code = ki.code
+        left join kpi_item ki2 on
+        kva.code = ki2.code
+        <where>
+            kva.busi_type = #{input.busiType} and  kva.period = #{input.period}
+            <if test="input.type != null and input.type != ''">
+                AND kva.type = #{input.type}
+            </if>
+            <if test="input.code != null and input.code != ''">
+                AND  kva.code = #{input.code}
+            </if>
+            <if test="input.codeName != null and input.codeName != ''">
+                AND  (ki.name like concat('%',#{input.codeName},'%') or ki2.item_name like concat('%',#{input.codeName},'%'))
+            </if>
+            <if test="input.userId != null">
+                AND  kva.user_id = #{input.userId}
+            </if>
+            <if test="input.accountUnit != null">
+                AND  kva.account_unit = #{input.accountUnit}
+            </if>
+        </where>
+    </select>
+    <select id="getItemUsers" resultType="com.pig4cloud.pigx.admin.api.entity.SysUser">
+        select distinct c.user_id,c.name from kpi_item a
+          join kpi_item_result b on a.code = b.code
+          join sys_user c on b.user_id = c.user_id
+        where a.busi_type =#{busiType} and a.status =0 and a.caliber =1 and period =#{period}
+        group by user_id
+    </select>
+    <select id="getItemNames" resultType="com.hscloud.hs.cost.account.model.dto.kpi.AttendanceCheckDTO">
+        select distinct group_concat(item_name) item_names,user_id  from kpi_item_result a
+          join kpi_item b on a.code = b.code
+        ${ew.customSqlSegment}
+        group by user_id
+    </select>
+    <select id="findDictype" resultType="com.hscloud.hs.cost.account.model.dto.kpi.DicPageOutDto">
+        select
+            a.dict_type ,
+            a.description,
+            a.remarks,
+            sdi.dict_id,
+            sdi.item_value ,
+            sdi.label,
+            sdi.description,
+            sdi.remarks
+        from
+            sys_dict a
+                join sys_dict_item sdi on
+                a.dict_type = sdi.dict_type
+                    and a.id = sdi.dict_id
+        where
+            a.del_flag = '0'
+          and sdi.del_flag = '0'
+        <if test="input.name != null and input.name != ''">
+            and (a.description like concat(concat('%', #{input.name}), '%') or a.remarks like
+            concat(concat('%', #{input.name}), '%') or a.dict_type like
+            concat(concat('%', #{input.name}), '%')or sdi.item_value like
+            concat(concat('%', #{input.name}), '%')
+            or sdi.label like
+            concat(concat('%', #{input.name}), '%')
+            or sdi.remarks like
+            concat(concat('%', #{input.name}), '%')
+            or sdi.description like
+            concat(concat('%', #{input.name}), '%'))
+        </if>
+        <if test="input.appCode != null and input.appCode != ''">
+            and a.app_code = #{input.appCode}
+        </if>
+        order by
+            a.dict_type desc
+    </select>
+</mapper>
+

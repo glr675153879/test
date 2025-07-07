@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiAccountUnitMapper">
+
+    <resultMap id="docNurseMap" type="com.hscloud.hs.cost.account.model.vo.kpi.KpiAccountRelationVO">
+        <result column="doc_account_id" property="docAccountId"/>
+        <result column="doc_account_name" property="docAccountName"/>
+        <collection property="nurseAccountList" ofType="com.hscloud.hs.cost.account.model.vo.kpi.KpiAccountDocNurseVO">
+            <result column="nurse_account_id" property="nurseAccountId"/>
+            <result column="nurse_account_name" property="nurseAccountName"/>
+            <result column="status" property="status"/>
+        </collection>
+    </resultMap>
+
+    <select id="getAccountRelationPageList" resultMap="docNurseMap">
+        select kau.id doc_account_id,
+        case when kau.status = '1' then concat(kau.name,'(停用)') else kau.name end doc_account_name,
+        ka.id nurse_account_id,
+        case when ka.status = '1' then concat(ka.name,'(停用)') else ka.name end nurse_account_name,ka.status
+        from kpi_account_unit kau
+        left join kpi_member km on km.host_id = kau.id
+                  and km.member_type = #{memberType} and km.host_code = #{dto.categoryCode}
+        left join kpi_account_unit ka on km.member_id = ka.id and kau.busi_type = ka.busi_type
+        where kau.del_flag = '0' and kau.status = '0' and kau.category_code = #{categoryCode}
+        and kau.busi_type = #{dto.busiType}
+        and kau.id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="getAccountRelationIdList" resultType="java.lang.Long">
+        select distinct kau.id
+        from kpi_account_unit kau
+        left join kpi_member km on km.host_id = kau.id and km.member_type = #{memberType} and km.host_code = #{dto.categoryCode}
+        left join kpi_account_unit ka on km.member_id = ka.id
+        where kau.del_flag = '0' and kau.status = '0'
+        and kau.category_code = #{categoryCode}
+        and kau.busi_type = #{dto.busiType}
+        <if test="dto.docAccountName != null and dto.docAccountName != ''">
+            and kau.name like concat('%',#{dto.docAccountName},'%')
+        </if>
+        <if test="dto.nurseAccountName != null and dto.nurseAccountName != ''">
+            and ka.name like concat('%',#{dto.nurseAccountName},'%')
+        </if>
+    </select>
+    <select id="getAccountUnit" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiAccountUnitVO">
+        select * from kpi_account_unit
+        where del_flag = '0'
+        <if test="input.status != null and input.status != ''">
+            and status = #{input.status}
+        </if>
+        <if test="input.categoryCode != null and input.categoryCode != ''">
+            and category_code = #{input.categoryCode}
+        </if>
+        <if test="input.accountTypeCode != null and input.accountTypeCode != ''">
+            and account_type_code = #{input.accountTypeCode}
+        </if>
+        <if test="input.busiType != null and input.busiType != ''">
+            and busi_type = #{input.busiType}
+        </if>
+        <if test="input.accountUserCode != null and input.accountUserCode != ''">
+            and account_user_code = #{input.accountUserCode}
+        </if>
+        <if test="input.accountGroup != null and input.accountGroup != ''">
+            and account_group = #{input.accountGroup}
+        </if>
+        <if test="input.deptType != null and input.deptType != ''">
+            and dept_type = #{input.deptType}
+        </if>
+        <if test="input.name != null and input.name != ''">
+            and name like concat('%',#{input.name},'%')
+        </if>
+        <if test="input.groupCode != null and input.groupCode != ''">
+            and group_code  = #{input.groupCode}
+        </if>
+        <if test="input.responsiblePersonName != null and input.responsiblePersonName != ''">
+            and responsible_person_name like concat('%',#{input.responsiblePersonName},'%')
+        </if>
+        <if test="input.isDisposition != null and input.isDisposition != ''">
+            <if test='input.isDisposition =="Y"'>
+               and factor is not null
+           </if>
+            <if test='input.isDisposition =="N"'>
+                and factor is  null
+            </if>
+        </if>
+    </select>
+
+</mapper>
+

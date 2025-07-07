@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiItemCopyMapper">
+
+    <select id="getList" resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiCalculateConfigDto">
+        SELECT
+            a.id,
+            a.period,
+            a.code,
+            a.dept_id,
+            a.dept_name,
+            a.user_id,
+            a.user_name,
+            a.user_type,
+            a.dept_user_type,
+            a.unit_type,
+            a.group_name,
+            a.`value`,
+            b.caliber,
+            b.item_name as name,
+            a.mate_flag as user_imp
+        FROM
+            kpi_item_result_copy a join kpi_item_copy b on a.code = b.code and a.task_child_id = b.task_child_id
+                ${ew.customSqlSegment}
+    </select>
+
+    <select id="getAlloValue" resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiReportAlloValue">
+        SELECT
+        a.code,
+        d.item_name name,
+        '1' type,
+        a.user_id,
+        a.source_dept,
+        b.emp_name user_name,
+        a.dept_id,
+        c.name dept_name,
+        a.imputation_dept_id,
+        e.name imputation_dept_name,
+        value
+        FROM
+        kpi_item_result a
+        left join kpi_user_attendance b on a.user_id = b.user_id and a.period = b.period
+        left join kpi_account_unit c on c.id = a.dept_id
+        left join kpi_item d on a.code = d.code
+        left join cost_cluster_unit e on a.imputation_dept_id = e.id
+        where 1=1 and a.period=#{period}
+        and (1!=1 or #{r.type} ='1'
+        <if test="r.outMembersEmp!=null and r.outMembersEmp!=''">
+            or a.user_id in
+            <foreach item="item" index="index" collection="r.outMembersEmp.split(',')" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="r.outMembersDept!=null and r.outMembersDept!=''">
+            or a.dept_id in
+            <foreach item="item" index="index" collection="r.outMembersDept.split(',')" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="r.outMembersImp!=null and r.outMembersImp!=''">
+            or a.imputation_dept_id in
+            <foreach item="item" index="index" collection="r.outMembersImp.split(',')" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>)
+        and a.code in
+        <foreach item="item" index="index" collection="r.allocationItems.split(',')" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getAlloValue2" resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiReportAlloValue">
+        SELECT
+        a.code,
+        d.item_name name,
+        '1' type,
+        a.user_id,
+        b.emp_name user_name,
+        a.dept_id,
+        a.source_dept,
+        c.name dept_name,
+        a.imputation_dept_id,
+        e.name imputation_dept_name,
+        value
+        FROM
+            kpi_item_result_copy a
+            left join kpi_user_attendance_copy b on a.user_id = b.user_id and a.period = b.period and a.task_child_id = b.task_child_id
+            left join kpi_account_unit_copy c on c.id = a.dept_id and a.task_child_id = c.task_child_id
+            left join kpi_item_copy d on a.code = d.code and a.task_child_id = d.task_child_id
+            left join kpi_cluster_unit_copy e on a.imputation_dept_id = e.id and a.task_child_id = e.task_child_id
+            where a.task_child_id = #{r.taskChildId} and a.period =#{period}
+        and (1!=1 or #{r.type} ='1'
+        <if test="r.outMembersEmp!=null and r.outMembersEmp!=''">
+            or a.user_id in
+            <foreach item="item" index="index" collection="r.outMembersEmp.split(',')" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="r.outMembersDept!=null and r.outMembersDept!=''">
+            or a.dept_id in
+            <foreach item="item" index="index" collection="r.outMembersDept.split(',')" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="r.outMembersImp!=null and r.outMembersImp!=''">
+            or a.imputation_dept_id in
+            <foreach item="item" index="index" collection="r.outMembersImp.split(',')" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>)
+        and a.code in
+        <foreach item="item" index="index" collection="r.allocationItems.split(',')" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>
+

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiIndexFormulaMapper">
+    <update id="updateDelFlag">
+        update kpi_index_formula set del_flag = '1' where id in
+        <foreach collection="ids" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="getFormulaListByIndexCode"
+            resultType="com.hscloud.hs.cost.account.model.entity.kpi.KpiIndexFormula">
+        select formula_group,max(formula) formula from kpi_index_formula
+        where index_code = #{indexCode}
+        group by formula_group
+    </select>
+    <select id="getPlanList" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiIndexFormulaPlanVO">
+        select f.*,i.caliber from kpi_index_formula f
+        join kpi_index i on f.index_code = i.code
+        where f.index_code = #{dto.indexCode} and f.formula_group = #{dto.formulaGroup}
+    </select>
+</mapper>
+

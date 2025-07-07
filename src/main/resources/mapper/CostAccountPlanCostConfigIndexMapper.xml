@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.CostAccountPlanCostConfigIndexMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.hscloud.hs.cost.account.model.entity.CostAccountPlanCostConfigIndex" id="costAccountPlanCostConfigIndexMap">
+        <result property="id" column="id"/>
+        <result property="configId" column="config_id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type"/>
+        <result property="configKey" column="config_key"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="tenantId" column="tenant_id"/>
+    </resultMap>
+
+ 
+
+    <sql id="sqlCostAccountPlanCostConfigIndexPart">
+        select id, config_id, name, type, config_key, create_time, update_time, create_by, update_by, tenant_id from cost_account_plan_cost_config_index
+    </sql>
+    <delete id="deleteByConfigKey">
+        delete from cost_account_plan_cost_config where config_key=#{config_key}
+    </delete>
+
+
+</mapper>

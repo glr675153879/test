@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiDictItemMapper">
+
+
+	<select id="findDictype" resultType="com.pig4cloud.pigx.admin.api.dto.DicPageOutDto">
+		select
+		    distinct
+		a.dict_type as dictType ,
+		a.description,
+		a.remarks,
+		a.system_flag as systemFlag,
+		a.app_code as appCode,
+		a.id as dict_id
+		from
+		hsx.sys_dict a
+		left join hsx.sys_dict_item sdi on
+		a.dict_type = sdi.dict_type
+		and a.id = sdi.dict_id
+		where
+		a.del_flag = '0'
+		and a.tenant_id = #{tenantId}
+		<if test="input.name != null and input.name != ''">
+			and (a.description like concat(concat('%', #{input.name}), '%') or a.remarks like
+			concat(concat('%', #{input.name}), '%') or a.dict_type like
+			concat(concat('%', #{input.name}), '%')or sdi.item_value like
+			concat(concat('%', #{input.name}), '%')
+			or sdi.label like
+			concat(concat('%', #{input.name}), '%')
+			or sdi.remarks like
+			concat(concat('%', #{input.name}), '%')
+			or sdi.description like
+			concat(concat('%', #{input.name}), '%'))
+		</if>
+		<if test="input.appCode != null and input.appCode != ''">
+			and a.app_code = #{input.appCode}
+		</if>
+		order by
+		a.dict_type desc
+	</select>
+
+	<select id="selectByIdIgnoreDelFlag" resultType="com.pig4cloud.pigx.admin.api.entity.SysDictItem">
+        select * from sys_dict_item where id = #{id}
+    </select>
+    <select id="dictPage" resultType="com.hscloud.hs.cost.account.model.entity.kpi.KpiDict">
+		select * from kpi_dict
+		<where>
+			<if test="input.dictType != null and input.dictType != ''">
+				and dict_type = #{input.dictType}
+			</if>
+			<if test="input.description != null and input.description != ''">
+				and description like concat (concat('%',#{input.description}),'%')
+			</if>
+		</where>
+		order by status
+	</select>
+	<select id="dictItemPage" resultType="com.hscloud.hs.cost.account.model.entity.kpi.KpiDictItem">
+		select * from kpi_dict_item
+		<where>
+			<if test="input.dictType != null and input.dictType != ''">
+				and dict_type = #{input.dictType}
+			</if>
+			<if test="input.description != null and input.description != ''">
+				and label like concat (concat('%',#{input.description}),'%')
+			</if>
+		</where>
+	</select>
+
+</mapper>

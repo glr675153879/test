@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.CostAccountPlanMapper">
+
+    <select id="listByQueryDto"
+            resultType="com.hscloud.hs.cost.account.model.entity.CostAccountPlan">
+        SELECT
+        *
+        FROM
+        cost_account_plan
+        <where>
+            del_flag = '0'
+            <if test="query.id != null and query.id != ''">
+                AND id = #{query.id}
+            </if>
+            <if test="query.name != null and query.name != ''">
+                <bind name="nameLike" value="'%'+query.name+'%'"/>
+                AND name LIKE #{nameLike}
+            </if>
+            <if test="query.planGroupId != null and query.planGroupId != ''">
+                AND plan_group_id = #{query.planGroupId}
+            </if>
+            <if test="query.updateBy != null and query.updateBy != ''">
+                AND updateBy = #{query.updateBy}
+            </if>
+            <if test="query.updateByNumber != null and query.updateByNumber != ''">
+                AND updateByNumber = #{query.updateByNumber}
+            </if>
+            <if test="query.updateTime != null and query.updateTime != ''">
+                AND updateTime = #{query.updateTime}
+            </if>
+        </where>
+
+    </select>
+</mapper>

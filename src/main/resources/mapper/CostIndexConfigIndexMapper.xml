@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.CostIndexConfigIndexMapper">
+    <delete id="deleteByIndexId" parameterType="java.lang.Long">
+        delete from cost_index_config_index where index_id = #{id}
+    </delete>
+
+    <select id="getByIndexId" resultType="com.hscloud.hs.cost.account.model.entity.CostIndexConfigIndex"
+            parameterType="java.lang.Long">
+        select * from cost_index_config_index where index_id = #{id}
+    </select>
+</mapper>

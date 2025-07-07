@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.CostMonitorSetMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.hscloud.hs.cost.account.model.entity.CostMonitorSet" id="costMonitorSetMap">
+        <result property="id" column="id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="unitId" column="unit_id"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+
+    <sql id="sqlCostMonitorSetPart">
+        select id,
+               create_by,
+               create_time,
+               del_flag,
+               formula,
+               index_id,
+               unit,
+               unit_id,
+               update_by,
+               update_time
+        from cost_monitor_set
+    </sql>
+    <select id="queryListAll" resultType="com.hscloud.hs.cost.account.model.vo.monitorCenter.CostMonitorSetVo">
+
+        SELECT
+        cau.id AS unit_id,
+        cau.name AS unit_name,
+        cau.status AS unit_status,
+        cai.id AS item_id,
+        cai.account_item_name AS item_name,
+        cai.status AS item_status,
+        cai.measure_unit,
+        cms.id as id,
+        cms.target_value
+        FROM
+        cost_account_unit AS cau
+        CROSS JOIN
+        cost_account_item AS cai
+        LEFT JOIN cost_monitor_set cms on cau.id = cms.unit_id and cai.id = cms.item_id
+        WHERE
+        cau.del_flag = 0
+        AND cai.del_flag = 0
+        <if test="query.unitId !=null and query.unitId !=''">
+            and cau.id = #{query.unitId}
+        </if>
+        <if test="query.itemId !=null and query.itemId !=''">
+            and cai.id = #{query.itemId}
+        </if>
+        <if test="query.unitName !=null and query.unitName !=''">
+            and cau.name like concat('%',#{query.unitName},'%')
+        </if>
+        <if test="query.itemName !=null and query.itemName !=''">
+            and cai.account_item_name like concat('%',#{query.itemName},'%')
+        </if>
+        <if test="query.status!=null ">
+            <choose>
+                <when test="query.status == 0 ">
+                    AND (cms.target_value is null OR cms.target_value = '')
+                </when>
+                <otherwise>
+                    AND cms.target_value is not null
+                </otherwise>
+            </choose>
+        </if>
+        order by cau.create_time desc
+    </select>
+    <select id="queryCount" resultType="java.lang.Integer">
+
+        SELECT
+        count(1)
+        FROM
+        cost_account_unit AS cau
+        CROSS JOIN
+        cost_account_item AS cai
+        LEFT JOIN cost_monitor_set cms on cau.id = cms.unit_id and cai.id = cms.item_id
+        WHERE
+        cau.del_flag = 0
+        AND cai.del_flag = 0
+        <if test="unitId !=null and unitId !=''">
+            and cau.id = #{unitId}
+        </if>
+        <if test="itemId !=null and itemId !=''">
+            and cai.id = #{itemId}
+        </if>
+        <if test="status!=null ">
+            <choose>
+                <when test="status == 0 ">
+                    AND (cms.target_value is null OR cms.target_value = '')
+                </when>
+                <otherwise>
+                    AND cms.target_value is not null
+                </otherwise>
+            </choose>
+        </if>
+        order by cau.create_time desc
+    </select>
+    <select id="queryTrendList" resultType="com.hscloud.hs.cost.account.model.vo.monitorCenter.CostMonitorCenterVo">
+        select res.* from (SELECT
+        cau.id AS unit_id,
+        cau.name AS unit_name,
+        cau.status AS unit_status,
+        cai.id AS item_id,
+        cai.account_item_name AS item_name,
+        cai.status AS item_status,
+        cai.measure_unit,
+        cms.id as id,
+        cms.target_value,
+        IFNULL(cmam.abnormalMonth,0)  AS abnormalMonth
+        FROM
+        cost_account_unit AS cau
+        CROSS JOIN
+        cost_account_item AS cai
+        LEFT JOIN cost_monitor_set cms on cau.id = cms.unit_id and cai.id = cms.item_id
+        left join (
+        select unit_id,item_id,count(1)  as abnormalMonth from cost_monitor_ab_month
+        WHERE del_flag = 0
+        GROUP BY unit_id,item_id
+        ) cmam on cau.id = cmam.unit_id and cai.id = cmam.item_id
+        WHERE
+        cau.del_flag = 0 and cau.status = 0
+        AND cai.del_flag = 0 and cai.status = 0
+        AND cms.target_value is not null
+        <if test="query.unitId !=null and query.unitId !=''">
+            and cau.id = #{query.unitId}
+        </if>
+        <if test="query.itemId !=null and query.itemId !=''">
+            and cai.id = #{query.itemId}
+        </if>
+        <if test="query.unitName !=null and query.unitName !=''">
+            and cau.name like concat('%',#{query.unitName},'%')
+        </if>
+        <if test="query.itemName !=null and query.itemName !=''">
+            and cai.account_item_name like concat('%',#{query.itemName},'%')
+        </if>
+        order by cau.create_time desc
+        ) res
+        <if test="query.abnormalMonth !=null ">
+            where  res.abnormalMonth = #{query.abnormalMonth}
+        </if>
+
+    </select>
+    <select id="queryMonitorValue"
+            resultType="com.hscloud.hs.cost.account.model.vo.monitorCenter.CostMonitorValTrendVo">
+        SELECT
+        cau.id AS unit_id,
+        cau.name AS unit_name,
+        cai.id AS item_id,
+        cai.account_item_name AS item_name,
+        cai.status AS item_status,
+        cai.measure_unit,
+        cms.target_value
+        FROM
+        cost_account_unit AS cau
+        CROSS JOIN
+        cost_account_item AS cai
+        LEFT JOIN cost_monitor_set cms on cau.id = cms.unit_id and cai.id = cms.item_id
+        WHERE
+        cau.del_flag = 0 and cau.status = 0
+        AND cai.del_flag = 0 and cai.status = 0
+        <if test="query.unitId !=null and query.unitId !=''">
+            and cau.id = #{query.unitId}
+        </if>
+        <if test="query.itemId !=null and query.itemId !=''">
+            and cai.id = #{query.itemId}
+        </if>
+        AND cms.target_value is not null
+        order by cau.create_time desc
+        limit 1
+    </select>
+
+
+</mapper>

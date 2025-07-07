@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiAccountTaskChildMapper">
+
+    <update id="updateLog">
+        update kpi_account_task_child set updated_date=now(),status_name=#{status_name},
+        status=#{status}
+        <if test="log!=null">
+            ,run_log=CONCAT(run_log,#{log})
+        </if>
+        <if test="ero_log !=null">
+            ,ero_log=CONCAT(IFNULL(ero_log,''),#{ero_log})
+        </if>
+        where id=#{id}
+    </update>
+</mapper>
+

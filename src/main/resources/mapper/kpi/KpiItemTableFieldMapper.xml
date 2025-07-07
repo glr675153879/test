@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiItemTableFieldMapper">
+    <select id="getFields" resultType="com.hscloud.hs.cost.account.model.entity.kpi.KpiItemTableField">
+        SELECT COLUMN_NAME    AS field_name,
+               DATA_TYPE      AS field_type,
+               COLUMN_COMMENT As field_comment
+        FROM information_schema.columns
+        WHERE table_schema = #{schemaName}
+          AND table_name = #{tableName}
+    </select>
+    <select id="getPage" resultType="com.hscloud.hs.cost.account.model.entity.kpi.KpiItemTableField">
+        select * from kpi_item_table_field kitf
+        where kitf.del_flag = '0'
+        <if test="input.tableId != null">
+            and kitf.table_id = #{input.tableId}
+        </if>
+        <if test="input.fieldName != null and input.fieldName != ''">
+            and kitf.field_name like concat('%',#{input.fieldName},'%')
+        </if>
+        <if test="input.fieldType != null and input.fieldType != ''">
+            and kitf.field_type = #{input.fieldType}
+        </if>
+        <if test="input.fieldComment != null and input.fieldComment != ''">
+            and kitf.field_comment like concat('%',#{input.fieldComment},'%')
+        </if>
+        <if test="input.status != null and input.status != ''">
+            and kitf.status = #{input.status}
+        </if>
+        order by kitf.id desc
+    </select>
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiUserFactorMapper">
+
+
+    <select id="getList" resultType="com.hscloud.hs.cost.account.model.entity.kpi.KpiUserFactor">
+        select * from kpi_user_factor
+        <where>
+            type = 'user'
+            <if test="input.deptCode != null and input.deptCode != ''">
+                AND dept_code = #{input.deptCode}
+            </if>
+            <if test="input.name != null and input.name != ''">
+                AND name like  concat('%',#{input.name}, '%')
+            </if>
+            <if test="input.itemCode != null and input.itemCode != ''">
+                AND item_code = #{input.itemCode} and type = 'office'
+            </if>
+        </where>
+    </select>
+    <select id="getUserDept" resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiUserFactorBeforeDto">
+        select
+            a.*,
+            kau.name as deptName,
+            b.dept_id as unitId,
+            s.username as name,
+            case when s.del_flag = '0' and s.status = '0' then 0 else 1 end userStatus
+        from
+            kpi_user_factor a
+                left join hsx.sys_user_dept b on
+                a.user_id = b.user_id
+                left join hsx.sys_dept kau on
+                b.dept_id = kau.dept_id
+                left join sys_user s on
+                a.user_id = s.user_id
+        where
+             a.type = 'user' and a.del_flag = '0'
+        <if test="input.name != null and input.name != ''">
+            AND  s.username like  concat('%',#{input.name}, '%')
+        </if>
+    </select>
+    <select id="getListByDicType"
+            resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiPersonnelFactorList">
+        select
+            a.*,
+            kdi.parent_code as parentCode,
+            kdi.label,
+            kdi.performance_subsidy_value
+            su.username as name
+        from
+            kpi_user_factor a
+                join kpi_dict_item kdi on
+                a.item_code = kdi.item_code
+                join sys_user su on
+                a.user_id = su.user_id
+        where
+            a.`type` = 'coefficient'
+          and a.dic_type = #{dicType}
+          and a.del_flag = '0'
+    </select>
+    <select id="getDictKey" resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiDictItemOutDto">
+        SELECT
+            a.id,
+            a.dict_type,
+            a.description,
+            a.personnel_factor,
+            a.performance_subsidy,
+            kdi.item_code,
+            kdi.personnel_factor_value ,
+            kdi.performance_subsidy_value ,
+            kdi.label
+        from
+            kpi_dict a
+                left join kpi_dict_item kdi on
+                a.dict_type = kdi.dict_type
+        where
+            a.del_flag = '0'
+          and a.status = '0'
+    </select>
+    <select id="deptValueList" resultType="com.hscloud.hs.cost.account.model.dto.kpi.KpiUserFactorDeptDto">
+        SELECT
+            kuf.user_id as userId,
+            kua.emp_name as name,
+            kua.account_unit as deptId,
+            kau.name as unitName,
+            kua.period,
+            kau.factor
+        from
+            kpi_user_factor kuf
+                left join kpi_user_attendance kua on
+                kuf.user_id = kua.user_id
+                left join kpi_account_unit kau on
+                kua.account_unit = kau.id
+        where
+            kuf.`type` = 'user'
+          and kuf.del_flag = '0'
+          and kua.period = #{input.period}
+          and kua.busi_type = #{input.busiType}
+          and kua.del_flag = '0'
+        <if test="input.name != null and input.name != ''">
+            AND  kua.emp_name like  concat('%',#{input.name}, '%')
+        </if>
+        <if test="input.unitName != null and input.unitName != ''">
+            AND  kau.name like  concat('%',#{input.unitName}, '%')
+        </if>
+        order by kua.account_unit
+    </select>
+
+</mapper>

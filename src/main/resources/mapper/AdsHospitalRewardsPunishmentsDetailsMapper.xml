@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.AdsHospitalRewardsPunishmentsDetailsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hscloud.hs.cost.account.model.pojo.AdsHospitalRewardsPunishmentsDetails">
+        <result column="dt" property="dt" />
+        <result column="order_id" property="orderId" />
+        <result column="account_unit_id" property="accountUnitId" />
+        <result column="account_unit_doc" property="accountUnitDoc" />
+        <result column="dept_total" property="deptTotal" />
+        <result column="manager_total" property="managerTotal" />
+        <result column="support_director" property="supportDirector" />
+        <result column="support_doc" property="supportDoc" />
+        <result column="support_nur_head" property="supportNurHead" />
+        <result column="support_nur" property="supportNur" />
+        <result column="support_emp" property="supportEmp" />
+        <result column="other_director" property="otherDirector" />
+        <result column="other_doc" property="otherDoc" />
+        <result column="other_nur_head" property="otherNurHead" />
+        <result column="other_nur" property="otherNur" />
+        <result column="other_emp" property="otherEmp" />
+        <result column="elec_medical_record" property="elecMedicalRecord" />
+        <result column="exam_transfer_patient" property="examTransferPatient" />
+        <result column="zj_reward" property="zjReward" />
+        <result column="other_1" property="other1" />
+        <result column="other" property="other" />
+        <result column="reward_punish" property="rewardPunish" />
+        <result column="total" property="total" />
+    </resultMap>
+
+</mapper>

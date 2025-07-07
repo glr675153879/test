@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiAllocationRuleMapper">
+
+    <select id="getPage" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiAllocationRuleListVO">
+        select r.*,c.category_name plan from kpi_allocation_rule r left join kpi_category c on r.plan_code = c.category_code
+        where r.index_code = #{dto.indexCode} and r.del_flag = '0'
+    </select>
+    <select id="getYhgx" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiAllocationRuleListVO$Yhgx">
+        select km.host_code doc_code,kau.id doc_account_id,kau.name as doc_account_name,
+        ka.id nurse_account_id,ka.name as nurse_account_name
+        from kpi_account_unit kau
+        left join kpi_member km on km.host_id = kau.id and km.member_type = 'account_unit_relation'
+        left join kpi_account_unit ka on km.member_id = ka.id and kau.busi_type = ka.busi_type
+        where kau.del_flag = '0' and kau.category_code = 'HSDX001'
+        and km.host_code = #{docCode}
+        and kau.busi_type = '1'
+        and km.host_id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>
+

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.CostCalculationFormulaMapper">
+
+    <insert id="saveCalculationFormulaDepartmentUnit">
+        insert into cost_calculation_formula_department_unit(
+            department_unit_id,
+            department_unit_name,
+            calculation_formula_id
+        )values (
+                 #{accountUnitId},
+                 #{accountUnitName},
+                 #{calculationFormulaId}
+                        )
+    </insert>
+</mapper>

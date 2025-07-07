@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.CostDocNRelationMapper">
+
+    <select id="listDocNRelation" resultType="com.hscloud.hs.cost.account.model.entity.CostAccountUnit">
+        select *
+        from cost_account_unit cau
+        where cau.account_group_code like '%HSDX001%'
+        and cau.del_flag = 0
+        <if test="docName != null and docName != ''">
+            and cau.name  like concat('%', #{docName}, '%')
+        </if>
+        <if test="nurseName != null and nurseName != ''">
+            and cau.id in(
+                select cdnr.doc_account_group_id
+                from cost_doc_n_relation cdnr
+                where cau.id = cdnr.doc_account_group_id
+                and cdnr.nurse_account_group_id in(
+                    select id
+                    from cost_account_unit
+                    where name like concat('%', #{nurseName}, '%')
+                )
+            )
+        </if>
+    </select>
+</mapper>

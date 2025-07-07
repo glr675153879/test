@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.AdsMonitorAccountItemMapper">
+
+
+    <select id="queryStatisticsValue" resultType="com.hscloud.hs.cost.account.model.vo.monitorCenter.CostMonitorDataVo">
+        WITH LatestRecord AS (SELECT account_unit_id,
+                                     account_item_id,
+                                     MAX(dt) AS latest_date,
+                                     concat(MAX(dt)," 06:00:00")  AS warn_time
+
+                              FROM nfjx_ads.ads_monitor_acount_item
+                              WHERE left(dt,7) = DATE_FORMAT(CURRENT_DATE, '%Y-%m')
+                                and account_unit_id = #{unitId}
+                                and account_item_id = #{itemId}),
+             MonthlyTotal AS (SELECT account_unit_id,
+                                     account_item_id,
+                                     ROUND(SUM(value), 2) AS total_value
+                              FROM nfjx_ads.ads_monitor_acount_item
+                              WHERE left(dt,7)= DATE_FORMAT(CURRENT_DATE, '%Y-%m')
+                                and account_unit_id = #{unitId}
+                                and account_item_id = #{itemId})
+        SELECT lr.account_unit_id as unitId,
+               lr.account_item_id as itemId,
+               lr.warn_time,
+               m.dt as monitorDate,
+               ROUND(m.value, 2) AS monitorValue,
+               mt.total_value            as monitorValueMonth
+        FROM LatestRecord lr
+                 JOIN
+             nfjx_ads.ads_monitor_acount_item m
+             ON lr.account_unit_id = m.account_unit_id AND lr.account_item_id = m.account_item_id AND lr.latest_date = m.dt
+                 JOIN
+             MonthlyTotal mt ON lr.account_unit_id = mt.account_unit_id AND lr.account_item_id = mt.account_item_id
+        ORDER BY lr.account_unit_id, lr.account_item_id
+        limit 1
+    </select>
+    <select id="queryList" resultType="com.hscloud.hs.cost.account.model.vo.monitorCenter.CostMonitorCenterTrendVo">
+        select ROUND(value, 2)                                         as monitorValue,
+               dt as monitorDate,
+               ROUND(SUM(value) OVER ( ORDER BY dt ASC ), 2) AS monitorValueCount
+        from nfjx_ads.ads_monitor_acount_item
+        where account_unit_id = #{unitId}
+          and account_item_id = #{itemId}
+          and left(dt, 7) = #{month}
+    </select>
+    <select id="queryMonitorMonthValue"
+            resultType="com.hscloud.hs.cost.account.model.vo.monitorCenter.CostMonitorCenterMonthVo">
+        SELECT account_unit_id as unitId,
+               account_item_id as itemId,
+               DATE_FORMAT(dt, '%Y-%m') AS month,
+               SUM(value)                 AS monitorValueMonth
+        FROM nfjx_ads.ads_monitor_acount_item
+        WHERE account_unit_id = #{unitId}
+          AND account_item_id = #{itemId}
+          AND YEAR(dt) = #{year}
+        GROUP BY month
+        ORDER BY month;
+    </select>
+    <select id="queryMonitorValTrendList"
+            resultType="com.hscloud.hs.cost.account.model.vo.monitorCenter.CostMonitorValTrendVo">
+        select ROUND(value, 2)                                         as monitorValue,
+               dt as monitorDate,
+               ROUND(SUM(value) OVER ( ORDER BY dt ASC ), 2) AS monitorValueMonth
+        from nfjx_ads.ads_monitor_acount_item
+        where account_unit_id = #{unitId}
+          and account_item_id = #{itemId}
+          and left(dt, 7) = #{month}
+    </select>
+    <select id="queryYearAvg" resultType="java.math.BigDecimal">
+        SELECT AVG(ROUND(value, 2)) AS averageMonitorValue
+        FROM nfjx_ads.ads_monitor_acount_item
+        WHERE YEAR(dt) = #{year}
+          AND account_unit_id = #{unitId}
+          AND account_item_id = #{itemId}
+    </select>
+    <select id="queryCount" resultType="java.math.BigDecimal">
+        SELECT sum(value) as countValue
+        FROM nfjx_ads.ads_monitor_acount_item
+        WHERE dt >= #{startDate}
+          AND dt &lt;= #{endDate}
+          AND account_unit_id = #{unitId}
+          AND account_item_id = #{itemId}
+        ORDER BY dt;
+
+    </select>
+    <select id="queryMonitorAbnormalMonth"
+            resultType="com.hscloud.hs.cost.account.model.vo.monitorCenter.CostMonitorAbnormalMonVo">
+        SELECT cmd.account_unit_id as unitId,
+               cmd.account_item_id as itemId,
+               DATE_FORMAT(cmd.dt, '%Y-%m') AS month,
+               SUM(cmd.value)                 AS monitorValueMonth,
+               cms.target_value,
+               cai.measure_unit
+        FROM nfjx_ads.ads_monitor_acount_item cmd
+                 left join cost_monitor_set cms on cmd.account_unit_id = cms.unit_id and cmd.account_item_id = cms.item_id
+                 left join cost_account_item cai on cmd.account_item_id = cai.id
+                 left join cost_account_unit cau on cmd.account_unit_id = cau.id
+        WHERE cmd.account_unit_id = #{unitId}
+          AND cmd.account_item_id = #{itemId}
+          AND YEAR(cmd.dt) = #{year}
+          and cai.status = 0
+          and cau.status = 0
+          and cai.del_flag = 0
+          and cau.del_flag = 0
+        GROUP BY DATE_FORMAT(cmd.dt, '%Y-%m')
+        ORDER BY DATE_FORMAT(cmd.dt, '%Y-%m')
+
+    </select>
+    <select id="queryMonitorAbnormalItem"
+            resultType="com.hscloud.hs.cost.account.model.vo.monitorCenter.CostMonitorAbnormalItemVo">
+        WITH LatestRecord AS (SELECT account_unit_id,
+                                     account_item_id,
+                                     MAX(dt) AS latest_date,
+                                    concat(MAX(dt)," 06:00:00")  AS warn_time
+                              FROM nfjx_ads.ads_monitor_acount_item
+                                where left(dt, 7) = #{query.month}
+
+        <if test="query.unitId !=null and query.unitId !=''">
+            and account_unit_id = #{query.unitId}
+        </if>
+
+                              GROUP BY account_unit_id,account_item_id
+        ),
+             MonthlyTotal AS (SELECT account_unit_id,
+                                     account_item_id,
+                                     ROUND(SUM(value), 2) AS total_value
+                              FROM nfjx_ads.ads_monitor_acount_item
+                                where left(dt, 7) = #{query.month}
+        <if test="query.unitId !=null and query.unitId !=''">
+            and account_unit_id = #{query.unitId}
+        </if>
+                              GROUP BY account_unit_id,account_item_id
+
+             )
+        SELECT lr.account_unit_id as unitId,
+               lr.account_item_id as itemId,
+               lr.warn_time,
+               m.dt as monitorDate,
+               ROUND(m.value, 2) AS monitorValue,
+               mt.total_value            as monitorValueMonth,
+               cms.target_value,
+               cai.measure_unit,
+               cau.NAME AS unit_name,
+               cai.account_item_name AS item_name
+        FROM LatestRecord lr
+                 JOIN
+             nfjx_ads.ads_monitor_acount_item m
+             ON lr.account_unit_id = m.account_unit_id AND lr.account_item_id = m.account_item_id AND lr.latest_date = m.dt
+                 JOIN
+             MonthlyTotal mt ON lr.account_unit_id = mt.account_unit_id AND lr.account_item_id = mt.account_item_id
+                 LEFT JOIN cost_monitor_set cms ON lr.account_unit_id = cms.unit_id
+            AND lr.account_item_id = cms.item_id
+                 LEFT JOIN cost_account_item cai ON lr.account_item_id = cai.id
+                 LEFT JOIN cost_account_unit cau ON lr.account_unit_id = cau.id
+        WHERE
+        cai.del_flag = 0
+        AND cau.del_flag = 0
+        AND cai.STATUS = 0
+        AND cau.STATUS = 0
+        <if test="query.unitName !=null and query.unitName !=''">
+            and cau.name like concat('%',#{query.unitName},'%')
+        </if>
+        <if test="query.itemName !=null and query.itemName !=''">
+            and cai.account_item_name like concat('%',#{query.itemName},'%')
+        </if>
+        having cms.target_value is not null and cms.target_value !=''
+        ORDER BY lr.account_unit_id, lr.account_item_id
+    </select>
+    <select id="queryGenerateMonitorAbnormalMonth"
+            resultType="com.hscloud.hs.cost.account.model.entity.CostMonitorAbMonth">
+        SELECT cmd.account_unit_id as unitId,
+               cmd.account_item_id as itemId,
+               DATE_FORMAT(cmd.dt, '%Y-%m') AS month,
+               round(SUM(cmd.value),2) AS monitorValueMonth,
+               cms.target_value,
+               cai.measure_unit
+        FROM nfjx_ads.ads_monitor_acount_item cmd
+                 left join cost_monitor_set cms on cmd.account_unit_id = cms.unit_id and cmd.account_item_id = cms.item_id
+                 left join cost_account_item cai on cmd.account_item_id = cai.id
+                 left join cost_account_unit cau on cmd.account_unit_id = cau.id
+        WHERE cai.status = 0
+          and cau.status = 0
+          and cai.del_flag = 0
+          and cau.del_flag = 0
+        <if test="startMonth !=null and startMonth != ''">
+            and DATE_FORMAT(cmd.dt, '%Y-%m') >= #{startMonth}
+        </if>
+        <if test="endMonth !=null and endMonth != ''">
+            and DATE_FORMAT(cmd.dt, '%Y-%m') &lt;= #{endMonth}
+        </if>
+        GROUP BY cmd.account_unit_id,cmd.account_item_id,DATE_FORMAT(cmd.dt, '%Y-%m')
+        ORDER BY DATE_FORMAT(cmd.dt, '%Y-%m')
+    </select>
+</mapper>

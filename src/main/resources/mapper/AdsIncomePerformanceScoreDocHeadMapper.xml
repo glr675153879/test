@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.AdsIncomePerformanceScoreDocHeadMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hscloud.hs.cost.account.model.pojo.AdsIncomePerformanceScoreDocHead">
+        <result column="account_period" property="accountPeriod" />
+        <result column="rylx" property="rylx" />
+        <result column="hsdylx" property="hsdylx" />
+        <result column="account_unit_id" property="accountUnitId" />
+        <result column="account_unit_name" property="accountUnitName" />
+        <result column="emp_name" property="empName" />
+        <result column="zw" property="zw" />
+        <result column="gwxs" property="gwxs" />
+        <result column="cqxs" property="cqxs" />
+        <result column="khqkszjx" property="khqkszjx" />
+        <result column="zcysrs" property="zcysrs" />
+        <result column="cqysrs" property="cqysrs" />
+        <result column="jcjx" property="jcjx" />
+        <result column="xljx" property="xljx" />
+        <result column="gmjx" property="gmjx" />
+        <result column="grmzgzl" property="grmzgzl" />
+        <result column="fsrc" property="fsrc" />
+        <result column="khdf" property="khdf" />
+        <result column="gfgzl" property="gfgzl" />
+        <result column="yyjf" property="yyjf" />
+        <result column="jxgzhj" property="jxgzhj" />
+        <result column="gljx" property="gljx" />
+        <result column="bs" property="bs" />
+        <result column="es" property="es" />
+        <result column="kzrcys" property="kzrcys" />
+    </resultMap>
+
+</mapper>

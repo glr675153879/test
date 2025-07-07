@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.second.SecondTaskMapper">
+
+    <select id="sumTask" resultType="com.hscloud.hs.cost.account.model.entity.second.SecondTask">
+        select
+            second_task_id as id,sum(ks_amt) as ks_amt
+        from sec_unit_task
+        where second_task_id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        group by second_task_id
+    </select>
+</mapper>
+

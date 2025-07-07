@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiIndexMapper">
+
+
+    <select id="getList" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiIndexListVO">
+        select i.*,c.category_name category,c.category_name from kpi_index i left join kpi_category c on i.category_code = c.category_code
+        where i.del_flag = '0'
+        <if test='input.categoryCode != null and input.categoryCode != ""'>
+            and i.category_code = #{input.categoryCode}
+        </if>
+        <if test='input.name != null and input.name != ""'>
+            and i.name like concat('%',#{input.name},'%')
+        </if>
+        <if test='input.status != null and input.status != ""'>
+            and i.status = #{input.status}
+        </if>
+        <if test='input.caliber != null and input.caliber != ""'>
+            and i.caliber = #{input.caliber}
+        </if>
+        <if test='input.impFlag != null and input.impFlag != ""'>
+            and i.imp_flag = #{input.impFlag}
+        </if>
+        <if test='input.secondFlag != null and input.secondFlag != ""'>
+            and i.second_flag = #{input.secondFlag}
+        </if>
+          <if test='input.impCategoryCode != null and input.impCategoryCode != ""'>
+              and i.imp_category_code = #{input.impCategoryCode}
+          </if>
+        <if test='input.type != null and input.type != ""'>
+            <choose>
+                <when test='input.type=="10"'>
+                    and i.type in ('1','2')
+                </when>
+                <when test='input.type=="11"'>
+                    and i.type = '3'
+                </when>
+                <otherwise>
+                    and i.type = #{input.type}
+                </otherwise>
+            </choose>
+        </if>
+        <if test='input.codes != null and input.codes != ""'>
+            and i.code in
+            <foreach collection="input.codes.split(',')" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+    <select id="getPate" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiIndexListVO">
+        select i.*,c.category_name category,c.category_name from kpi_index i left join kpi_category c on i.category_code = c.category_code
+        where i.del_flag = '0'
+        <if test='input.categoryCode != null and input.categoryCode != ""'>
+            and i.category_code = #{input.categoryCode}
+        </if>
+        <if test='input.name != null and input.name != ""'>
+            and i.name like concat('%',#{input.name},'%')
+        </if>
+        <if test='input.status != null and input.status != ""'>
+            and i.status = #{input.status}
+        </if>
+        <if test='input.caliber != null and input.caliber != ""'>
+            and i.caliber = #{input.caliber}
+        </if>
+        <if test='input.impFlag != null and input.impFlag != ""'>
+            and i.imp_flag = #{input.impFlag}
+        </if>
+        <if test='input.secondFlag != null and input.secondFlag != ""'>
+            and i.second_flag = #{input.secondFlag}
+        </if>
+        <if test='input.impCategoryCode != null and input.impCategoryCode != ""'>
+            and i.imp_category_code = #{input.impCategoryCode}
+        </if>
+        <if test='input.type != null and input.type != ""'>
+            <choose>
+                <when test='input.type=="10"'>
+                    and i.type in ('1','2')
+                </when>
+                <when test='input.type=="11"'>
+                    and i.type = '3'
+                </when>
+                <otherwise>
+                    and i.type = #{input.type}
+                </otherwise>
+            </choose>
+        </if> order by i.id desc
+    </select>
+    <select id="getSysDict" resultType="com.pig4cloud.pigx.admin.api.entity.SysDictItem">
+        select * from sys_dict_item where 1=1
+        <if test='list != null'>
+            and item_value in
+            <foreach collection="list" item="item" separator="," index="index" open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+         and dict_type = #{dicType}
+         and tenant_id = #{tenantId}
+    </select>
+</mapper>
+

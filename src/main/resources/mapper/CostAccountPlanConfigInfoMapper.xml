@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.CostAccountPlanConfigInfoMapper">
+    <insert id="saveUnitId">
+        INSERT INTO cost_account_plan_config_index_info (plan_index_id,unit_id) VALUES(#{planIndexId},#{unitId})
+    </insert>
+
+    <select id="selectIdByParentIndexId" resultType="java.lang.Long">
+        select id from cost_account_plan_config_info where parent_index_id=#{parentIndexId}
+    </select>
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiItemEquivalentMapper">
+    <select id="getPage" resultType="com.hscloud.hs.cost.account.model.entity.kpi.KpiItemEquivalent">
+
+    </select>
+
+    <update id="updateBatchById">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE kpi_item_equivalent
+            SET
+            new_total_workload = #{item.newTotalWorkload}
+            <if test="item.totalWorkloadAdmin != null">
+                , total_workload_admin = #{item.totalWorkloadAdmin}
+            </if>
+            <if test="item.distributeType != null">
+                , distribute_type = #{item.distributeType}
+            </if>
+            <if test="item.coefficient != null">
+                , coefficient = #{item.coefficient}
+            </if>
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+    <update id="updateStdEquivalent">
+        update kpi_item_equivalent kie
+            left join kpi_item_equivalent_config kiec on kie.code = kiec.item_code and
+                                                         kie.account_unit_id = kiec.account_unit_id
+        set kie.std_equivalent = COALESCE(kiec.std_equivalent, 0.000000)
+        where kie.period = #{period}
+          and kie.code = kiec.item_code
+          and kie.account_unit_id = kiec.account_unit_id;
+    </update>
+    <update id="updateTotalEquivalent">
+        update kpi_item_equivalent kie
+        set kie.total_equivalent = COALESCE(kie.total_workload_admin, kie.total_workload) * kie.std_equivalent
+        where period = #{period};
+    </update>
+</mapper>

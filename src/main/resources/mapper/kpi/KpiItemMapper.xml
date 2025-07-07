@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiItemMapper">
+    <select id="executeSql" resultType="java.util.LinkedHashMap">
+        ${sql}
+    </select>
+    <select id="pageData" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiItemVO">
+        SELECT 	a.id,
+                  a.item_name,
+                  a.category_code,
+                  a.acq_method,
+                  a.report_id,
+                  a.retain_decimal,
+                  a.carry_rule,
+                  a.account_object,
+                  a.ext_status,
+                  a.config,
+                  a.status,
+                  a.del_flag,
+                  a.change_flag,
+                  a.caliber,
+                  a.check_status,
+                  a.condition_flag,
+                  a.created_id,
+                  a.created_date,
+                  a.updated_id,
+                  a.updated_date,
+                  a.tenant_id,
+                  a.beds_flag,
+                  a.description,
+                  a.error_info,
+                  a.ext_date,
+                  a.ext_template,
+                  a.code,
+                  a.busi_type,
+                  a.project_flag,
+                  a.second_flag,
+                  a.table_ids,
+                  a.item_cond,
+                  a.equivalent_flag,
+                  a.assign_flag,
+                  a.pro_category_code,
+                  a.service_item_category_code,
+                  a.unit,
+                  ifnull(b.num,0) ext_num
+        from
+            kpi_item a
+        left join ( select code,COUNT(*)num from kpi_item_result where period =#{period} group by code  )b
+        on a.code =b.code
+            ${ew.customSqlSegment}
+    </select>
+    <select id="pageDataOld" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiItemVO">
+        select * from (
+        select config,now() updated_date
+        from kpi_item
+        ${ew.customSqlSegment}
+        union
+        select config,updated_date
+        from kpi_item_sql
+        ${ew.customSqlSegment})a order  by updated_date desc
+    </select>
+    <select id="getDeletedItem" resultType="com.hscloud.hs.cost.account.model.entity.kpi.KpiItem">
+        select a.id,
+               a.item_name,
+               a.category_code,
+               a.acq_method,
+               a.report_id,
+               a.retain_decimal,
+               a.carry_rule,
+               a.account_object,
+               a.ext_status,
+               a.config,
+               a.status,
+               a.del_flag,
+               a.change_flag,
+               a.caliber,
+               a.check_status,
+               a.condition_flag,
+               a.created_id,
+               a.created_date,
+               a.updated_id,
+               a.updated_date,
+               a.tenant_id,
+               a.beds_flag,
+               a.description,
+               a.error_info,
+               a.ext_date,
+               a.ext_template,
+               a.code,
+               a.busi_type,
+               a.project_flag,
+               a.second_flag,
+               a.table_ids,
+               a.item_cond,
+               a.equivalent_flag,
+               a.assign_flag,
+               a.pro_category_code,
+               a.service_item_category_code,
+               a.unit
+        from kpi_item a
+        where del_flag = '1' and busi_type = '1'
+        and code = #{code}
+        limit 1
+    </select>
+</mapper>
+

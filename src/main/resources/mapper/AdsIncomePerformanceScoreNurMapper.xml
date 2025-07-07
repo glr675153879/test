@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.AdsIncomePerformanceScoreNurMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hscloud.hs.cost.account.model.pojo.AdsIncomePerformanceScoreNur">
+        <result column="account_period" property="accountPeriod"/>
+        <result column="account_unit_id" property="accountUnitId"/>
+        <result column="account_unit_name" property="accountUnitName"/>
+        <result column="account_unit_group" property="accountUnitGroup"/>
+        <result column="outpatient" property="outpatient"/>
+        <result column="inpatient" property="inpatient"/>
+        <result column="insurance" property="insurance"/>
+        <result column="insurance_income" property="insuranceIncome"/>
+        <result column="day_care" property="dayCare"/>
+        <result column="turn_icu" property="turnIcu"/>
+        <result column="turn_emergency" property="turnEmergency"/>
+        <result column="clinicnurse" property="clinicnurse"/>
+        <result column="lastmonth" property="lastmonth"/>
+        <result column="turn_in" property="turnIn"/>
+        <result column="turn_out" property="turnOut"/>
+        <result column="total_income" property="totalIncome"/>
+        <result column="total_cost" property="totalCost"/>
+        <result column="performance_score" property="performanceScore"/>
+    </resultMap>
+    <select id="selectNurseAchievementVo" resultType="com.hscloud.hs.cost.account.model.vo.NurseAchievementVo">
+        SELECT
+        p.total_income AS totalIncome,
+        p.total_cost AS totalCost,
+        p.performance_score AS performanceScore,
+        c.perf_point AS perfPoint,
+        c.account_unit_id AS accountUnitId,
+        c.account_unit_nur AS accountUnitNur
+        FROM
+        nfjx_ads.ads_income_performance_score_nur p
+        LEFT JOIN nfjx_ads.ads_income_performance_clinical_nur c ON c.account_unit_id = p.account_unit_id
+        AND c.account_period = p.account_period
+        WHERE
+        1=1
+        <if test="accountTime != null and accountTime !=''">
+            AND c.account_period = #{accountTime}
+        </if>
+        <if test="unitId != null">
+            AND c.account_unit_id = #{unitId}
+        </if>
+        <if test="unitName != null and unitName !=''">
+            <bind name="unitNameLike" value="'%'+unitName+'%'"/>
+            AND c.account_unit_nur LIKE #{unitNameLike}
+        </if>
+
+    </select>
+    <select id="selectTotalCost" resultType="java.math.BigDecimal" parameterType="java.lang.String">
+        SELECT SUM(performanceScore) AS performanceScore
+        FROM (
+        SELECT
+        p.total_income AS totalIncome,
+        p.total_cost AS totalCost,
+        p.performance_score AS performanceScore,
+        c.perf_point AS perfPoint,
+        c.account_unit_id AS accountUnitId,
+        c.account_unit_nur AS accountUnitNur
+        FROM
+        nfjx_ads.ads_income_performance_score_nur p
+        LEFT JOIN nfjx_ads.ads_income_performance_clinical_nur c ON c.account_unit_id = p.account_unit_id
+        AND c.account_period = p.account_period
+        WHERE
+        1=1
+        <if test="accountTime != null and accountTime !=''">
+            AND c.account_period = #{accountTime}
+        </if>
+        ) AS subquery;
+    </select>
+
+</mapper>

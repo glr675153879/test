@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.CostDataChangeRecordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.hscloud.hs.cost.account.model.entity.CostDataChangeRecord">
+        <id column="id" property="id" />
+        <result column="biz_id" property="bizId" />
+        <result column="change_item" property="changeItem" />
+        <result column="change_source" property="changeSource" />
+        <result column="change_type" property="changeType" />
+        <result column="change_before" property="changeBefore" />
+        <result column="change_after" property="changeAfter" />
+        <result column="change_desc" property="changeDesc" />
+        <result column="change_time" property="changeTime" />
+        <result column="rule" property="rule" />
+        <result column="effect_time" property="effectTime" />
+        <result column="status" property="status" />
+        <result column="create_by" property="createBy" />
+        <result column="update_by" property="updateBy" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="tenant_id" property="tenantId" />
+    </resultMap>
+
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hscloud.hs.cost.account.mapper.CostCollectionUnitMapper">
+
+    <insert id="saveAccountCollection">
+        insert into cost_account_collection(
+            account_unit_id,
+            collection_id
+        )values (
+                 #{accountId},
+                 #{collectionUnitId}
+                        )
+    </insert>
+    <delete id="removeAccountUnitIds">
+        DELETE  FROM `cost_account_collection` where collection_id = #{collectionUnitId}
+    </delete>
+    <select id="getAccountUnitIds" resultType="java.lang.Long">
+        SELECT account_unit_id FROM `cost_account_collection` where collection_id = #{collectionUnitId}
+    </select>
+</mapper>

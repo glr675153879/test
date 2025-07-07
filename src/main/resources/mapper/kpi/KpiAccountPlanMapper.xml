@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hscloud.hs.cost.account.mapper.kpi.KpiAccountPlanMapper">
+
+    <select id="getPage" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiAccountPlanListVO">
+        select p.*,k.name index_name from kpi_account_plan p left join kpi_index k on p.index_code = k.code
+        where 1=1 and p.del_flag = '0'
+          <if test='input.planName != null and input.planName != ""'>
+              and p.plan_name like concat('%',#{input.planName},'%')
+          </if>
+        <if test='input.categoryCode != null and input.categoryCode != ""'>
+            and p.category_code = #{input.categoryCode}
+        </if>
+        <if test="input.createdDate0 != null">
+            and p.created_date >= #{input.createdDate0}
+        </if>
+        <if test='input.createDate1 != null'>
+            and p.created_date &lt;= #{input.createDate1}
+        </if>
+    </select>
+    <select id="getList" resultType="com.hscloud.hs.cost.account.model.vo.kpi.KpiAccountPlanListVO">
+        select p.*,k.name index_name from kpi_account_plan p left join kpi_index k on p.index_code = k.code
+        where 1=1
+        <if test='input.planName != null and input.planName != ""'>
+            and p.plan_name like concat('%',#{input.planName},'%')
+        </if>
+        <if test='input.categoryCode != null and input.categoryCode != ""'>
+            and p.category_code = #{input.categoryCode}
+        </if>
+        <if test="input.createdDate0 != null">
+            and p.created_date >= #{input.createdDate0}
+        </if>
+        <if test='input.createDate1 != null'>
+            and p.created_date &lt;= #{input.createDate1}
+        </if>
+    </select>
+</mapper>
+
